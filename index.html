@@ -971,7 +971,8 @@
             ],
             allTeam: ['Ariene', 'Raquel', 'Thiago', 'Daniel', 'Araújo', 'Celso', 'Bruno', 'Pablo', 'Lucas', 'Braga', 'Guilherme', 'Pedro'],
             matrixChars: 'アァカサタナハマヤャラワガザダバパABCDEF0123456789<>{}[]',
-            
+            matrixWords: ['Vue', 'PHP', 'SQL', 'API', 'CSS', 'Git', 'npm', 'TCDF', 'deploy', 'Docker', 'Redis', 'JSON', 'REST', 'JWT', 'CI/CD', 'Linux', 'bash', 'prod'],
+
             // Bug types for PROD phase (specific movement)
             bugTypes: {
                 jump: { emojis: ['🦗', '🕷️'], name: 'Pular' },
@@ -1300,8 +1301,10 @@
                 // Stop any previous Tone.js music
                 stopPhaseMusic();
 
-                // Initialize Tone.js if needed
-                await Tone.start();
+                // Initialize Tone.js if needed (AFTER user interaction)
+                if (Tone.context.state !== 'running') {
+                    await Tone.start();
+                }
 
                 const music = PHASE_MUSIC[phaseNumber];
                 if (!music) {
