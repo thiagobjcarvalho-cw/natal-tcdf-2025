@@ -1,0 +1,26 @@
+# Backups
+backup/
+
+# FKT outputs
+fkt-master/
+
+# old
+old/
+
+# Arquivos temporários
+*.tmp
+*.bak
+*~
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log

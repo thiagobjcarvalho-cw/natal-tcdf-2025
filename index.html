@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Team TCDF - Natal 2025</title>
+
+    <!-- FIX: Meta tags SEO e acessibilidade -->
+    <meta name="description" content="Mensagem de Natal 2025 - Dev Team TCDF. Um jogo especial de fim de ano para a equipe de desenvolvimento.">
+    <meta name="theme-color" content="#0a0e14">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎄</text></svg>">
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================================================
+           RESET & BASE
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-green: #00ff88;
+            --dark-bg: #0a0e14;
+            --tcdf-blue: #1e5a96;
+            --terminal-green: #00ff00;
+            --danger-red: #ff4444;
+            --warning-yellow: #ffaa00;
+            --matrix-green: #00ff41;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--dark-bg);
+            color: var(--neon-green);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ==========================================================================
+           MATRIX BACKGROUND
+           ========================================================================== */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.55;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            writing-mode: horizontal-tb;
+            text-orientation: mixed;
+            font-size: 14px;
+            line-height: 1.8;
+            letter-spacing: 8px;
+            color: var(--matrix-green);
+            text-shadow: 0 0 8px var(--matrix-green), 0 0 15px rgba(0, 255, 136, 0.5);
+            animation: matrixDrop linear infinite;
+            opacity: 0.4;
+            font-weight: bold;
+        }
+
+        .matrix-column span {
+            display: block;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+
+        .matrix-column span:last-child {
+            opacity: 1;
+            text-shadow: 0 0 15px #fff, 0 0 25px var(--matrix-green);
+        }
+
+        .matrix-column span:nth-last-child(2) {
+            opacity: 0.8;
+        }
+
+        .matrix-column span:nth-last-child(3) {
+            opacity: 0.6;
+        }
+
+        @keyframes matrixDrop {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(250vh); }
+        }
+
+        /* ========== SNOWFLAKES ========== */
+        .snowflakes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -20px;
+            color: rgba(255, 255, 255, 0.6);
+            animation: snowfall linear infinite;
+        }
+
+        @keyframes snowfall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        /* ==========================================================================
+           SCREENS BASE
+           ========================================================================== */
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        .screen.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .screen.fade-out {
+            opacity: 0;
+        }
+
+        /* ==========================================================================
+           BUTTONS
+           ========================================================================== */
+        .btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            padding: 15px 30px;
+            background: transparent;
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.6);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: btnShine 3s infinite;
+        }
+
+        @keyframes btnShine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        /* ==========================================================================
+           SCREEN 1: INITIAL
+           ========================================================================== */
+        #screen-initial {
+            text-align: center;
+        }
+
+        .tree-image-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .tree-image {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            opacity: 0;
+            animation: fadeInTree 2s ease forwards, floatTree 4s ease-in-out infinite 2s;
+            filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.4));
+            border-radius: 10px;
+        }
+
+        @keyframes fadeInTree {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes floatTree {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .tree-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+            animation: treeGlowPulse 3s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes treeGlowPulse {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .logo-tree-emoji {
+            font-size: 80px;
+            animation: floatTreeEmoji 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px var(--neon-green));
+            display: none; /* Hidden by default, shown if image fails */
+        }
+
+        @keyframes floatTreeEmoji {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Small tree icon for other screens */
+        .tree-icon-small {
+            width: 50px;
+            height: auto;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+        }
+
+        .main-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 32px;
+            margin: 30px 0 15px;
+            text-shadow: 0 0 20px var(--neon-green);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 20px var(--neon-green); }
+            50% { text-shadow: 0 0 40px var(--neon-green), 0 0 60px var(--neon-green); }
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        /* ==========================================================================
+           SCREEN 2: HOMENAGEM
+           ========================================================================== */
+        #screen-homenagem {
+            padding: 20px;
+        }
+
+        .terminal-window {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--neon-green);
+            border-radius: 8px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border-bottom: 1px solid var(--neon-green);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27ca40; }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .terminal-body {
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .terminal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terminal-body::-webkit-scrollbar-track {
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .terminal-body::-webkit-scrollbar-thumb {
+            background: var(--neon-green);
+            border-radius: 4px;
+        }
+
+        .typewriter {
+            overflow: hidden;
+            white-space: pre-wrap;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--neon-green);
+            animation: blink 0.7s infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .names-grid {
+            color: #00ffff;
+            margin: 10px 0;
+        }
+
+        .comment {
+            color: #888;
+        }
+
+        .string {
+            color: #ffd700;
+        }
+
+        .keyword {
+            color: #ff6b9d;
+        }
+
+        /* Sleigh Animation */
+        .sleigh-container {
+            position: fixed;
+            top: 7%;
+            left: -400px;
+            font-size: 24px;
+            z-index: 100;
+            white-space: nowrap;
+            animation: sleighRide 18s ease-in-out forwards;
+        }
+
+        @keyframes sleighRide {
+            0% { left: 110%; transform: scaleX(1); }
+            40% { left: 50%; transform: translateX(-50%) scaleX(1); }
+            60% { left: 50%; transform: translateX(-50%) scaleX(1); }
+            100% { left: -1800px; transform: scaleX(1); }
+        }
+
+        .sleigh-wagons {
+            display: inline-block;
+            font-size: 12px;
+            margin-left: 10px;
+            animation: wagonsWobble 0.8s ease-in-out infinite;
+        }
+
+        @keyframes wagonsWobble {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* ==========================================================================
+           SCREEN 3: PLANTAO
+           ========================================================================== */
+        #screen-plantao {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .globo-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7c59f 50%, #ff6b35 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+            animation: globoPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes globoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .globo-inner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d3a4f 100%);
+        }
+
+        .plantao-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 36px;
+            color: #ff4444;
+            text-shadow: 0 0 20px #ff4444;
+            margin-bottom: 30px;
+            animation: plantaoFlash 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes plantaoFlash {
+            0% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .news-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff4444;
+            border-radius: 10px;
+            padding: 25px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .news-line {
+            margin: 15px 0;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .news-line.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .news-speaker {
+            font-weight: bold;
+            color: #ffaa00;
+        }
+
+        .news-speaker.ariene { color: #ff69b4; }
+        .news-speaker.raquel { color: #87ceeb; }
+        .news-speaker.doe { color: #ffd700; }
+
+        .doe-preview {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .doe-preview.visible {
+            opacity: 1;
+        }
+
+        .doe-header {
+            text-align: center;
+            border-bottom: 1px solid #ffd700;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* ==========================================================================
+           SCREEN 4: HERO SELECT
+           ========================================================================== */
+        #screen-heroes {
+            background: radial-gradient(ellipse at center, #0a1628 0%, var(--dark-bg) 100%);
+        }
+
+        .heroes-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .heroes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        .hero-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 11px;
+            padding: 20px 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-btn:hover {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+
+        .hero-btn::after {
+            content: '👨‍💻';
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 16px;
+            opacity: 0.5;
+        }
+
+        .heroes-note {
+            font-size: 12px;
+            opacity: 0.6;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        /* ==========================================================================
+           SCREEN 5: GAME
+           ========================================================================== */
+        #screen-game {
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .game-hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--neon-green);
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 11px;
+        }
+
+        .hud-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .hud-label {
+            font-size: 8px;
+            opacity: 0.7;
+        }
+
+        .hud-value {
+            color: #fff;
+        }
+
+        .hud-lives {
+            color: #ff4444;
+        }
+
+        .game-container {
+            position: relative;
+            border: 3px solid var(--tcdf-blue);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(30, 90, 150, 0.5);
+        }
+
+        .game-header {
+            background: var(--tcdf-blue);
+            padding: 8px;
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            color: white;
+        }
+
+        #gameCanvas {
+            display: block;
+            background: #0a1020;
+        }
+
+        /* Story Modal */
+        .story-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .story-modal.active {
+            display: flex;
+        }
+
+        .story-content {
+            background: rgba(0, 20, 40, 0.95);
+            border: 2px solid var(--neon-green);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .story-phase {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 24px;
+            color: var(--neon-green);
+            margin-bottom: 20px;
+        }
+
+        .story-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            color: #ffaa00;
+            margin-bottom: 20px;
+        }
+
+        .story-text {
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        /* Mobile Controls */
+        .mobile-controls {
+            display: none;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 5px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .control-btn:active {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+        }
+
+        .control-btn.fire {
+            width: 80px;
+            height: 80px;
+            font-size: 28px;
+            border-radius: 50%;
+            background: rgba(255, 68, 68, 0.3);
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-controls {
+                display: flex;
+            }
+
+            #gameCanvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        /* ==========================================================================
+           SCREEN 6: CONCLUSION
+           ========================================================================== */
+        #screen-conclusion {
+            text-align: center;
+        }
+
+        .conclusion-tree {
+            max-width: 180px;
+            width: 50%;
+            height: auto;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInTree 1.5s ease forwards, floatTree 4s ease-in-out infinite 1.5s;
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.4));
+            border-radius: 8px;
+        }
+
+        .conclusion-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 24px;
+            color: #ffd700;
+            text-shadow: 0 0 20px #ffd700;
+            margin-bottom: 30px;
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        .conclusion-terminal {
+            max-width: 600px;
+        }
+
+        .final-score {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            color: #00ffff;
+            margin: 20px 0;
+        }
+
+        .credits-container {
+            margin: 30px 0;
+        }
+
+        .credits-title {
+            font-size: 14px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+
+        .credits-names {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 500px;
+        }
+
+        .credit-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            padding: 8px 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--neon-green);
+            border-radius: 5px;
+            animation: creditGlow 2s ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes creditGlow {
+            0%, 100% {
+                box-shadow: 0 0 5px var(--neon-green);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 20px var(--neon-green);
+                transform: scale(1.05);
+            }
+        }
+
+        /* ==========================================================================
+           GAME OVER / PAUSE
+           ========================================================================== */
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 50;
+        }
+
+        .game-overlay.active {
+            display: flex;
+        }
+
+        .overlay-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 24px;
+            color: #ff4444;
+            text-shadow: 0 0 20px #ff4444;
+        }
+
+        .overlay-title.victory {
+            color: #00ff88;
+            text-shadow: 0 0 20px #00ff88;
+        }
+
+        /* ==========================================================================
+           AUDIO INDICATOR
+           ========================================================================== */
+        .audio-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .audio-indicator:hover {
+            opacity: 1;
+        }
+
+        /* ==========================================================================
+           LOADING
+           ========================================================================== */
+        .loading-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            animation: loadingPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Background -->
+    <div id="matrix-bg"></div>
+
+    <!-- Snowflakes -->
+    <div class="snowflakes" id="snowflakes"></div>
+
+    <!-- Audio Indicator (FIX: melhor acessibilidade) -->
+    <div class="audio-indicator" id="audioToggle" title="Controlar som" aria-label="Controle de áudio" role="button" tabindex="0">🔊</div>
+
+    <!-- SCREEN 1: INITIAL -->
+    <div class="screen active" id="screen-initial">
+        <div class="tree-image-container">
+            <div class="tree-glow"></div>
+            <img src="tree.png" alt="Feliz Natal - Dev Team TCDF" class="tree-image" id="treeImage" onerror="this.style.display='none'; document.getElementById('treeEmoji').style.display='block';">
+            <div class="logo-tree-emoji" id="treeEmoji">🎄</div>
+        </div>
+        <h1 class="main-title">Dev Team TCDF</h1>
+        <p class="subtitle">Uma mensagem especial de fim de ano</p>
+        <button class="btn" id="btnStart">▶ npm run homenagem</button>
+    </div>
+
+    <!-- SCREEN 2: HOMENAGEM -->
+    <div class="screen" id="screen-homenagem">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div class="terminal-title">bash — homenagem.sh</div>
+            </div>
+            <div class="terminal-body">
+                <div class="typewriter" id="homenagemText"></div>
+                <span class="cursor" id="homenagemCursor"></span>
+            </div>
+        </div>
+        <button class="btn" id="btnContinue" style="display: none; margin-top: 20px;">🎮 CONTINUAR</button>
+    </div>
+
+    <!-- Sleigh (appears during homenagem) -->
+    <div class="sleigh-container" id="sleigh" style="display: none;">
+        🦌🦌==🎅🛷
+        <span class="sleigh-wagons" id="sleighNames"></span>
+    </div>
+
+    <!-- SCREEN 3: PLANTAO -->
+    <div class="screen" id="screen-plantao">
+        <div class="globo-logo">
+            <div class="globo-inner"></div>
+        </div>
+        <div class="plantao-title">PLANTÃO</div>
+        <div class="news-container" id="newsContainer"></div>
+        <button class="btn" id="btnSelectHero" style="display: none; margin-top: 20px;">▶ SELECIONAR HERÓI</button>
+    </div>
+
+    <!-- SCREEN 4: HERO SELECT -->
+    <div class="screen" id="screen-heroes">
+        <h2 class="heroes-title">⬇️ ESCOLHA SEU HERÓI</h2>
+        <div class="heroes-grid" id="heroesGrid"></div>
+        <p class="heroes-note">🔒 Ariene e Raquel estão protegendo os setores críticos</p>
+    </div>
+
+    <!-- SCREEN 5: GAME -->
+    <div class="screen" id="screen-game">
+        <div class="game-hud">
+            <div class="hud-item">
+                <span class="hud-label">FASE</span>
+                <span class="hud-value" id="hudPhase">1</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">BUGS</span>
+                <span class="hud-value" id="hudBugs">0/12</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">VIDA</span>
+                <span class="hud-value hud-lives" id="hudLives">❤️❤️❤️</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">SCORE</span>
+                <span class="hud-value" id="hudScore">0</span>
+            </div>
+        </div>
+
+        <div class="game-container">
+            <div class="game-header">🏛️ TCDF - PRODUÇÃO</div>
+            <canvas id="gameCanvas" width="600" height="450"></canvas>
+
+            <!-- Game Over Overlay -->
+            <div class="game-overlay" id="gameOverOverlay">
+                <div class="overlay-title" id="overlayTitle">GAME OVER</div>
+                <div id="overlayMessage" style="text-align: center;"></div>
+                <button class="btn" id="btnRetry">🔄 TENTAR NOVAMENTE</button>
+            </div>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div class="mobile-controls">
+            <div class="control-group">
+                <div class="control-row">
+                    <button class="control-btn" data-key="up">⬆️</button>
+                </div>
+                <div class="control-row">
+                    <button class="control-btn" data-key="left">⬅️</button>
+                    <button class="control-btn" data-key="down">⬇️</button>
+                    <button class="control-btn" data-key="right">➡️</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <button class="control-btn fire" data-key="fire">🔥</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Modal -->
+    <div class="story-modal" id="storyModal">
+        <div class="story-content">
+            <div class="story-phase" id="storyPhase">FASE 1</div>
+            <div class="story-title" id="storyTitle">INVASÃO INICIAL</div>
+            <p class="story-text" id="storyText">Os bugs começaram a invadir o sistema! Primeiro contato detectado. Eliminação imediata necessária!</p>
+            <button class="btn" id="btnStartPhase">▶ INICIAR</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 6: CONCLUSION -->
+    <div class="screen" id="screen-conclusion">
+        <img src="tree.png" alt="Feliz Natal" class="conclusion-tree" onerror="this.style.display='none';">
+        <div class="conclusion-title">MISSAO COMPLETA!</div>
+        <div class="terminal-window conclusion-terminal">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div class="terminal-title">bash — victory.sh</div>
+            </div>
+            <div class="terminal-body" id="conclusionBody"></div>
+        </div>
+        <div class="final-score" id="finalScore">SCORE FINAL: 0</div>
+        <div class="credits-container">
+            <div class="credits-title">// A equipe que salvou o TCDF:</div>
+            <div class="credits-names" id="creditsNames"></div>
+        </div>
+        <button class="btn" id="btnReplay" style="margin-top: 20px;">🔄 JOGAR NOVAMENTE</button>
+    </div>
+
+    <script>
+        // ==========================================================================
+        // GAME STATE & CONFIG
+        // ==========================================================================
+        const CONFIG = {
+            heroes: ['Thiago', 'Daniel', 'Araújo', 'Celso', 'Bruno', 'Pablo', 'Lucas', 'Braga', 'Guilherme', 'Pedro'],
+            allTeam: ['Ariene', 'Raquel', 'Thiago', 'Daniel', 'Araújo', 'Celso', 'Bruno', 'Pablo', 'Lucas', 'Braga', 'Guilherme', 'Pedro'],
+            matrixWords: ['Vue', 'PHP', 'SQL', 'API', 'CSS', 'Git', 'npm', 'TCDF', 'deploy', 'Docker', 'Redis', 'JSON', 'REST', 'JWT', 'CI/CD', 'Linux', 'bash', 'prod'],
+            bugEmojis: ['🐛', '🪲', '🐜', '🦗', '🕷️', '🐞', '🪰', '🦟'],
+            phases: [
+                { name: 'INVASÃO INICIAL', bugs: 12, speed: 2, spawn: 2000, story: 'Os bugs começaram a invadir o sistema! Primeiro contato detectado. Eliminação imediata necessária!' },
+                { name: 'CÓDIGO CRÍTICO', bugs: 18, speed: 2.5, spawn: 1500, story: 'A situação piorou! Os bugs estão se multiplicando. O deploy de 2026 está em risco!' },
+                { name: 'BATALHA FINAL', bugs: 25, speed: 3, spawn: 1200, story: 'É AGORA OU NUNCA! Última linha de defesa. Todo o time conta com você!', hasBoss: true }
+            ]
+        };
+
+        const STATE = {
+            currentScreen: 'initial',
+            selectedHero: null,
+            score: 0,
+            lives: 3,
+            phase: 0,
+            bugsKilled: 0,
+            audioEnabled: true,
+            gameRunning: false
+        };
+
+        // ==========================================================================
+        // AUDIO SYSTEM (Web Audio API)
+        // ==========================================================================
+        let audioCtx = null;
+        let jingleBellsInterval = null;
+        let gameMusicInterval = null;
+
+        // FIX: Audio sync - função centralizada para atualizar UI
+        function updateAudioUI() {
+            document.getElementById('audioToggle').textContent = STATE.audioEnabled ? '🔊' : '🔇';
+        }
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playNote(freq, duration, type = 'triangle', volume = 0.1) {
+            if (!STATE.audioEnabled) return;
+            if (freq === 0) return; // REST - não toca nada
+            try {
+                const ctx = initAudio();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+                gain.gain.setValueAtTime(volume, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + duration);
+
+                // FIX: Memory leak - CLEANUP osciladores após uso
+                osc.onended = () => {
+                    osc.disconnect();
+                    gain.disconnect();
+                };
+            } catch (e) {}
+        }
+
+        // Jingle Bells melody - CORRIGIDA E COMPLETA (C Major)
+        const jingleBellsNotes = [
+            // ============ REFRÃO 1 ============
+            // "Jingle bells, jingle bells"
+            {n: 'E5', d: 0.25}, {n: 'E5', d: 0.25}, {n: 'E5', d: 0.5},
+            {n: 'E5', d: 0.25}, {n: 'E5', d: 0.25}, {n: 'E5', d: 0.5},
+            // "Jingle all the way"
+            {n: 'E5', d: 0.25}, {n: 'G5', d: 0.25}, {n: 'C5', d: 0.375}, {n: 'D5', d: 0.125}, {n: 'E5', d: 0.75},
+            {n: 'REST', d: 0.25},
+            // "Oh what fun it is to ride"
+            {n: 'F5', d: 0.25}, {n: 'F5', d: 0.25}, {n: 'F5', d: 0.25}, {n: 'F5', d: 0.25},
+            {n: 'F5', d: 0.25}, {n: 'E5', d: 0.25}, {n: 'E5', d: 0.25}, {n: 'E5', d: 0.125}, {n: 'E5', d: 0.125},
+            // "In a one-horse open sleigh, hey"
+            {n: 'E5', d: 0.25}, {n: 'D5', d: 0.25}, {n: 'D5', d: 0.25}, {n: 'E5', d: 0.25}, {n: 'D5', d: 0.5}, {n: 'G5', d: 0.5},
+            {n: 'REST', d: 0.25},
+
+            // ============ REFRÃO 2 (final diferente) ============
+            // "Jingle bells, jingle bells"
+            {n: 'E5', d: 0.25}, {n: 'E5', d: 0.25}, {n: 'E5', d: 0.5},
+            {n: 'E5', d: 0.25}, {n: 'E5', d: 0.25}, {n: 'E5', d: 0.5},
+            // "Jingle all the way"
+            {n: 'E5', d: 0.25}, {n: 'G5', d: 0.25}, {n: 'C5', d: 0.375}, {n: 'D5', d: 0.125}, {n: 'E5', d: 0.75},
+            {n: 'REST', d: 0.25},
+            // "Oh what fun it is to ride"
+            {n: 'F5', d: 0.25}, {n: 'F5', d: 0.25}, {n: 'F5', d: 0.25}, {n: 'F5', d: 0.25},
+            {n: 'F5', d: 0.25}, {n: 'E5', d: 0.25}, {n: 'E5', d: 0.25}, {n: 'E5', d: 0.125}, {n: 'E5', d: 0.125},
+            // "In a one-horse open sleigh" (final)
+            {n: 'G5', d: 0.25}, {n: 'G5', d: 0.25}, {n: 'F5', d: 0.25}, {n: 'D5', d: 0.25}, {n: 'C5', d: 1.0},
+            {n: 'REST', d: 0.5},
+
+            // ============ VERSO 1 ============
+            // "Dashing through the snow"
+            {n: 'G4', d: 0.25}, {n: 'E4', d: 0.25}, {n: 'D4', d: 0.25}, {n: 'C4', d: 0.25}, {n: 'G4', d: 0.75},
+            {n: 'REST', d: 0.25},
+            // "In a one-horse open sleigh"
+            {n: 'G4', d: 0.25}, {n: 'G4', d: 0.125}, {n: 'G4', d: 0.125}, {n: 'E4', d: 0.25}, {n: 'D4', d: 0.25}, {n: 'C4', d: 0.25}, {n: 'A4', d: 0.75},
+            {n: 'REST', d: 0.25},
+            // "O'er the fields we go"
+            {n: 'A4', d: 0.25}, {n: 'F4', d: 0.25}, {n: 'E4', d: 0.25}, {n: 'D4', d: 0.25}, {n: 'B4', d: 0.75},
+            {n: 'REST', d: 0.25},
+            // "Laughing all the way"
+            {n: 'G4', d: 0.25}, {n: 'G4', d: 0.25}, {n: 'F4', d: 0.25}, {n: 'D4', d: 0.25}, {n: 'E4', d: 0.75},
+            {n: 'REST', d: 0.5},
+
+            // ============ VERSO 2 ============
+            // "Bells on bobtails ring"
+            {n: 'G4', d: 0.25}, {n: 'E4', d: 0.25}, {n: 'D4', d: 0.25}, {n: 'C4', d: 0.25}, {n: 'G4', d: 0.75},
+            {n: 'REST', d: 0.25},
+            // "Making spirits bright"
+            {n: 'G4', d: 0.25}, {n: 'E4', d: 0.25}, {n: 'D4', d: 0.25}, {n: 'C4', d: 0.25}, {n: 'A4', d: 0.75},
+            {n: 'REST', d: 0.25},
+            // "What fun it is to ride and sing"
+            {n: 'A4', d: 0.25}, {n: 'A4', d: 0.25}, {n: 'F4', d: 0.25}, {n: 'E4', d: 0.25},
+            {n: 'D4', d: 0.25}, {n: 'G4', d: 0.25}, {n: 'G4', d: 0.25}, {n: 'G4', d: 0.25},
+            // "A sleighing song tonight, oh"
+            {n: 'G4', d: 0.25}, {n: 'A4', d: 0.25}, {n: 'G4', d: 0.25}, {n: 'F4', d: 0.25}, {n: 'D4', d: 0.25}, {n: 'C4', d: 0.5}, {n: 'G4', d: 0.5},
+            {n: 'REST', d: 0.5}
+        ];
+
+        const noteFreqs = {
+            'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
+            'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 'A5': 880.00, 'B5': 987.77,
+            'C6': 1046.50,
+            'REST': 0 // Para pausas
+        };
+
+        function playJingleBells() {
+            stopAllMusic();
+            let noteIndex = 0;
+            const tempo = 40; // Dobro do tempo (metade da velocidade)
+
+            function playNextNote() {
+                if (!STATE.audioEnabled || noteIndex >= jingleBellsNotes.length) {
+                    noteIndex = 0;
+                }
+
+                const note = jingleBellsNotes[noteIndex];
+                const freq = noteFreqs[note.n];
+                const duration = (60 / tempo) * note.d;
+
+                playNote(freq, duration, 'triangle', 0.08);
+                noteIndex++;
+
+                jingleBellsInterval = setTimeout(playNextNote, duration * 1000);
+            }
+
+            playNextNote();
+        }
+
+        // 8-bit game music
+        const gameMusicNotes = [
+            {n: 'C5', d: 0.125}, {n: 'E5', d: 0.125}, {n: 'G5', d: 0.125}, {n: 'C6', d: 0.125},
+            {n: 'G5', d: 0.125}, {n: 'E5', d: 0.125}, {n: 'C5', d: 0.125}, {n: 'E5', d: 0.125},
+            {n: 'D5', d: 0.125}, {n: 'F5', d: 0.125}, {n: 'A5', d: 0.125}, {n: 'D5', d: 0.125},
+            {n: 'A5', d: 0.125}, {n: 'F5', d: 0.125}, {n: 'D5', d: 0.125}, {n: 'F5', d: 0.125},
+            {n: 'E5', d: 0.125}, {n: 'G5', d: 0.125}, {n: 'B5', d: 0.125}, {n: 'E5', d: 0.125},
+            {n: 'B5', d: 0.125}, {n: 'G5', d: 0.125}, {n: 'E5', d: 0.125}, {n: 'G5', d: 0.125},
+            {n: 'C5', d: 0.25}, {n: 'G5', d: 0.25}, {n: 'C6', d: 0.5}
+        ];
+
+        function playGameMusic() {
+            stopAllMusic();
+            let noteIndex = 0;
+            const tempo = 50; // Dobro do tempo (metade da velocidade)
+
+            function playNextNote() {
+                if (!STATE.audioEnabled || noteIndex >= gameMusicNotes.length) {
+                    noteIndex = 0;
+                }
+
+                const note = gameMusicNotes[noteIndex];
+                const freq = noteFreqs[note.n];
+                const duration = (60 / tempo) * note.d;
+
+                playNote(freq, duration * 0.8, 'square', 0.05);
+                noteIndex++;
+
+                gameMusicInterval = setTimeout(playNextNote, duration * 1000);
+            }
+
+            playNextNote();
+        }
+
+        function stopAllMusic() {
+            if (jingleBellsInterval) {
+                clearTimeout(jingleBellsInterval);
+                jingleBellsInterval = null;
+            }
+            if (gameMusicInterval) {
+                clearTimeout(gameMusicInterval);
+                gameMusicInterval = null;
+            }
+        }
+
+        // Sound Effects
+        function playSFX(type) {
+            if (!STATE.audioEnabled) return;
+            try {
+                const ctx = initAudio();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                let duration = 0;
+
+                switch(type) {
+                    case 'shoot':
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(600, ctx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.08);
+                        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                        duration = 0.08;
+                        break;
+
+                    case 'explosion':
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(120, ctx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.15);
+                        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                        duration = 0.15;
+                        break;
+
+                    case 'damage':
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(80, ctx.currentTime);
+                        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+                        duration = 0.12;
+                        break;
+
+                    case 'powerup':
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(400, ctx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.15);
+                        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                        duration = 0.15;
+                        break;
+
+                    case 'bossHit':
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(200, ctx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.1);
+                        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+                        duration = 0.1;
+                        break;
+                }
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + duration);
+
+                // FIX: Memory leak - CLEANUP osciladores após uso
+                osc.onended = () => {
+                    osc.disconnect();
+                    gain.disconnect();
+                };
+            } catch (e) {}
+        }
+
+        // ==========================================================================
+        // MATRIX BACKGROUND
+        // ==========================================================================
+        let matrixRunning = true;
+
+        function initMatrix() {
+            if (!matrixRunning) return;
+
+            const container = document.getElementById('matrix-bg');
+            const numColumns = Math.floor(window.innerWidth / 50);
+
+            for (let i = 0; i < numColumns; i++) {
+                createMatrixColumn(container, i, numColumns);
+            }
+
+            // Continua criando novas colunas
+            setInterval(() => {
+                const col = Math.floor(Math.random() * numColumns);
+                createMatrixColumn(container, col, numColumns);
+            }, 800);
+        }
+
+        function createMatrixColumn(container, index, total) {
+            if (!matrixRunning) return;
+
+            const column = document.createElement('div');
+            column.className = 'matrix-column';
+            column.style.left = (index * (100 / total) + Math.random() * 3) + '%';
+
+            const duration = 8 + Math.random() * 8;
+            column.style.animationDuration = duration + 's';
+            column.style.opacity = 0.2 + Math.random() * 0.3;
+            column.style.fontSize = (12 + Math.random() * 6) + 'px';
+
+            // Pega uma palavra aleatória e coloca letra por letra
+            const word = CONFIG.matrixWords[Math.floor(Math.random() * CONFIG.matrixWords.length)];
+
+            for (let char of word) {
+                const span = document.createElement('span');
+                span.textContent = char;
+                column.appendChild(span);
+            }
+
+            container.appendChild(column);
+
+            // Remove após a animação
+            setTimeout(() => column.remove(), duration * 1000);
+        }
+
+        // Criar flocos de neve
+        function createSnowflakes() {
+            const container = document.getElementById('snowflakes');
+            const flakes = ['❄', '❅', '❆', '✦'];
+
+            for (let i = 0; i < 30; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.textContent = flakes[Math.floor(Math.random() * flakes.length)];
+                flake.style.left = Math.random() * 100 + '%';
+                flake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                flake.style.animationDelay = Math.random() * 8 + 's';
+                flake.style.opacity = Math.random() * 0.4 + 0.2;
+                flake.style.fontSize = (Math.random() * 0.8 + 0.4) + 'rem';
+                container.appendChild(flake);
+            }
+        }
+
+        // ==========================================================================
+        // SCREEN TRANSITIONS
+        // ==========================================================================
+        function showScreen(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            const targetScreen = document.getElementById(`screen-${screenId}`);
+
+            screens.forEach(screen => {
+                if (screen.classList.contains('active')) {
+                    screen.classList.add('fade-out');
+                    setTimeout(() => {
+                        screen.classList.remove('active', 'fade-out');
+                    }, 500);
+                }
+            });
+
+            setTimeout(() => {
+                targetScreen.classList.add('active');
+                STATE.currentScreen = screenId;
+            }, 500);
+        }
+
+        // ==========================================================================
+        // SCREEN 2: HOMENAGEM
+        // ==========================================================================
+        function startHomenagem() {
+            showScreen('homenagem');
+            playJingleBells();
+
+            const text = `$ npm run homenagem-2026
+<span class="comment">Compilando sentimentos...</span>
+<span class="comment">Carregando gratidão.dll...</span>
+
+<span class="string">✓ Build completo. Zero erros. 100% carinho.</span>
+
+🎄 Este deploy é dedicado a vocês:
+<span class="names-grid">   ► Ariene    ► Raquel    ► Daniel   ► Araújo   ► Celso   ► Bruno
+   ► Pablo     ► Lucas     ► Braga    ► Pedro    ► Guilherme</span>
+
+<span class="comment">/*
+* Obrigado por cada PR revisado, cada bug "impossível" resolvido,
+* e cada "funciona na minha máquina" que virou produção de verdade.
+*/</span>
+
+🚀 <span class="keyword">Preparing release:</span> v2026.0.0
+
+console.log(<span class="string">"🎄 Feliz Natal!"</span>);
+console.log(<span class="string">"🎆 Feliz 2026!"</span>);
+
+<span class="keyword">return</span> gratidão;
+<span class="comment">// — Com carinho, Thiago ❤️</span>`;
+
+            typeWriter(text, 'homenagemText', 20, () => {
+                document.getElementById('homenagemCursor').style.display = 'none';
+                startSleigh();
+            });
+        }
+
+        function typeWriter(text, elementId, speed, callback) {
+            const element = document.getElementById(elementId);
+            let i = 0;
+            let isTag = false;
+            let tagBuffer = '';
+
+            function type() {
+                if (i < text.length) {
+                    const char = text[i];
+
+                    if (char === '<') {
+                        isTag = true;
+                        tagBuffer = '<';
+                    } else if (char === '>') {
+                        isTag = false;
+                        tagBuffer += '>';
+                        element.innerHTML += tagBuffer;
+                        tagBuffer = '';
+                    } else if (isTag) {
+                        tagBuffer += char;
+                    } else {
+                        element.innerHTML += char;
+                    }
+
+                    i++;
+                    setTimeout(type, isTag ? 0 : speed);
+                } else if (callback) {
+                    callback();
+                }
+            }
+
+            type();
+        }
+
+        function startSleigh() {
+            const sleigh = document.getElementById('sleigh');
+            const names = document.getElementById('sleighNames');
+
+            // Create name wagons
+            names.innerHTML = CONFIG.allTeam.map(name => `[${name}]`).join(' ');
+
+            sleigh.style.display = 'block';
+
+            // Show continue button after sleigh animation
+            setTimeout(() => {
+                document.getElementById('btnContinue').style.display = 'block';
+            }, 5000);
+        }
+
+        // ==========================================================================
+        // SCREEN 3: PLANTAO
+        // ==========================================================================
+        function startPlantao() {
+            showScreen('plantao');
+            stopAllMusic();
+
+            // Try to play plantao audio
+            tryPlayPlantaoAudio();
+
+            const newsLines = [
+                { speaker: 'ariene', text: '⚠️ ATENÇÃO! Interrompemos a programação normal...' },
+                { speaker: 'ariene', text: 'Recebemos relatos de uma INVASÃO MASSIVA de bugs no sistema de produção do TCDF!' },
+                { speaker: 'raquel', text: '*chega correndo com papéis* OS HUs! OS HUs ESTÃO CHEIOS DE BUGS! 😱' },
+                { speaker: 'ariene', text: 'A situação é tão grave que saiu até no DOE - Diário Oficial Eletrônico!' },
+                { speaker: 'doe', text: '📋 [EXIBINDO DECRETO DE EMERGÊNCIA...]', showDoe: true },
+                { speaker: 'raquel', text: 'Precisamos dos melhores devs! Mas eu e a Ariene vamos proteger os setores críticos! 🔒' },
+                { speaker: 'ariene', text: 'É com vocês agora, heróis do TCDF. O deploy de 2026 depende de vocês!' }
+            ];
+
+            const container = document.getElementById('newsContainer');
+            container.innerHTML = '';
+
+            let delay = 1000;
+            newsLines.forEach((line, index) => {
+                const lineEl = document.createElement('div');
+                lineEl.className = 'news-line';
+                lineEl.innerHTML = `<span class="news-speaker ${line.speaker}">${line.speaker.toUpperCase()}:</span> ${line.text}`;
+                container.appendChild(lineEl);
+
+                setTimeout(() => {
+                    lineEl.classList.add('visible');
+
+                    if (line.showDoe) {
+                        setTimeout(() => showDoePreview(container), 500);
+                    }
+                }, delay);
+
+                delay += 2500;
+            });
+
+            setTimeout(() => {
+                document.getElementById('btnSelectHero').style.display = 'block';
+            }, delay + 1000);
+        }
+
+        function showDoePreview(container) {
+            const doePreview = document.createElement('div');
+            doePreview.className = 'doe-preview';
+            doePreview.innerHTML = `
+                <div class="doe-header">
+                    <strong>DIÁRIO OFICIAL ELETRÔNICO</strong><br>
+                    <small>Edição Extraordinária - 24/12/2025</small>
+                </div>
+                <div>
+                    <strong>DECRETO Nº 2025.12.24</strong><br><br>
+                    DECLARA ESTADO DE EMERGÊNCIA no ambiente de produção do TCDF devido à invasão massiva de bugs.<br><br>
+                    CONVOCA todos os desenvolvedores disponíveis para operação de contenção imediata.<br><br>
+                    <em>— Presidência do TCDF</em>
+                </div>
+            `;
+            container.appendChild(doePreview);
+
+            setTimeout(() => doePreview.classList.add('visible'), 100);
+        }
+
+        function tryPlayPlantaoAudio() {
+            try {
+                const audio = new Audio('old/plantao-da-globo.mp3');
+                audio.volume = 0.5;
+                audio.play().catch(() => {});
+            } catch (e) {}
+        }
+
+        // ==========================================================================
+        // SCREEN 4: HERO SELECTION
+        // ==========================================================================
+        function showHeroSelection() {
+            showScreen('heroes');
+            playGameMusic();
+
+            const grid = document.getElementById('heroesGrid');
+            grid.innerHTML = '';
+
+            CONFIG.heroes.forEach(hero => {
+                const btn = document.createElement('button');
+                btn.className = 'hero-btn';
+                btn.textContent = hero;
+                btn.addEventListener('click', () => selectHero(hero));
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectHero(hero) {
+            STATE.selectedHero = hero;
+            STATE.phase = 0;
+            STATE.score = 0;
+            STATE.lives = 3;
+            STATE.bugsKilled = 0;
+            showPhaseStory();
+        }
+
+        // ==========================================================================
+        // PHASE STORY
+        // ==========================================================================
+        function showPhaseStory() {
+            const modal = document.getElementById('storyModal');
+            const phase = CONFIG.phases[STATE.phase];
+
+            document.getElementById('storyPhase').textContent = `FASE ${STATE.phase + 1}`;
+            document.getElementById('storyTitle').textContent = phase.name;
+            document.getElementById('storyText').textContent = phase.story;
+
+            modal.classList.add('active');
+        }
+
+        // ==========================================================================
+        // GAME ENGINE
+        // ==========================================================================
+        let canvas, ctx;
+        let gameLoop = null;
+        let spawnInterval = null;
+        let player = { x: 50, y: 200, size: 30, speed: 5 };
+        let bullets = [];
+        let bugs = [];
+        let powerups = [];
+        let explosions = [];
+        let boss = null;
+        let bossProjectiles = [];
+        let keys = {};
+        let lastShot = 0;
+        let powerupSpawned = false;
+        let invulnerableUntil = 0; // FIX: Invulnerabilidade pós-hit
+        let gridCache = null; // FIX: Cache do grid estático
+
+        // FIX: Object pooling para performance
+        const bulletPool = [];
+        const explosionPool = [];
+
+        function getBullet() {
+            if (bulletPool.length > 0) {
+                return bulletPool.pop();
+            }
+            return { x: 0, y: 0, width: 15, height: 4, speed: 10 };
+        }
+
+        function returnBullet(bullet) {
+            bulletPool.push(bullet);
+        }
+
+        function getExplosion() {
+            if (explosionPool.length > 0) {
+                return explosionPool.pop();
+            }
+            return { x: 0, y: 0, frame: 0, big: false };
+        }
+
+        function returnExplosion(explosion) {
+            explosionPool.push(explosion);
+        }
+
+        function initGame() {
+            showScreen('game');
+
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+
+            // Reset game state
+            player = { x: 50, y: canvas.height / 2 - 15, size: 30, speed: 5 };
+            bullets = [];
+            bugs = [];
+            powerups = [];
+            explosions = [];
+            boss = null;
+            bossProjectiles = [];
+            STATE.bugsKilled = 0;
+            powerupSpawned = false;
+
+            updateHUD();
+
+            // Hide game over overlay
+            document.getElementById('gameOverOverlay').classList.remove('active');
+
+            // Start game loop
+            STATE.gameRunning = true;
+            startGameLoop();
+            startBugSpawner();
+        }
+
+        function startGameLoop() {
+            if (gameLoop) cancelAnimationFrame(gameLoop);
+
+            let lastTime = 0;
+            const targetFPS = 60;
+            const frameTime = 1000 / targetFPS;
+
+            function loop(currentTime) {
+                if (!STATE.gameRunning) return;
+
+                const deltaTime = currentTime - lastTime;
+
+                if (deltaTime >= frameTime) {
+                    lastTime = currentTime - (deltaTime % frameTime);
+                    update();
+                    render();
+                }
+
+                gameLoop = requestAnimationFrame(loop);
+            }
+
+            gameLoop = requestAnimationFrame(loop);
+        }
+
+        function startBugSpawner() {
+            if (spawnInterval) clearInterval(spawnInterval);
+
+            const phase = CONFIG.phases[STATE.phase];
+
+            spawnInterval = setInterval(() => {
+                // FIX: Memory leak - LIMPAR interval se jogo não está rodando
+                if (!STATE.gameRunning) {
+                    clearInterval(spawnInterval);
+                    spawnInterval = null;
+                    return;
+                }
+                if (STATE.bugsKilled >= phase.bugs && !phase.hasBoss) return;
+
+                spawnBug();
+
+                // Spawn powerup chance
+                if (Math.random() < 0.3 && powerups.length === 0) {
+                    spawnPowerup('coffee');
+                }
+
+                // Spawn planilha once per phase after 50%
+                if (!powerupSpawned && STATE.bugsKilled >= phase.bugs * 0.5) {
+                    powerupSpawned = true;
+                    setTimeout(() => spawnPowerup('planilha'), 1000);
+                }
+            }, phase.spawn);
+        }
+
+        function spawnBug() {
+            const phase = CONFIG.phases[STATE.phase];
+            bugs.push({
+                x: canvas.width + 30,
+                y: Math.random() * (canvas.height - 60) + 30,
+                size: 25,
+                speed: phase.speed + Math.random(),
+                emoji: CONFIG.bugEmojis[Math.floor(Math.random() * CONFIG.bugEmojis.length)]
+            });
+        }
+
+        function spawnPowerup(type) {
+            powerups.push({
+                x: canvas.width + 30,
+                y: Math.random() * (canvas.height - 60) + 30,
+                size: 30,
+                speed: 1.5,
+                type: type,
+                emoji: type === 'coffee' ? '☕' : '📊'
+            });
+        }
+
+        function spawnBoss() {
+            boss = {
+                x: canvas.width - 80,
+                y: canvas.height / 2,
+                size: 60,
+                hp: 50,
+                maxHp: 50,
+                speed: 2,
+                direction: 1,
+                shootTimer: 0
+            };
+        }
+
+        function update() {
+            const phase = CONFIG.phases[STATE.phase];
+
+            // Player movement
+            if (keys['ArrowUp'] || keys['KeyW']) player.y = Math.max(player.size / 2, player.y - player.speed);
+            if (keys['ArrowDown'] || keys['KeyS']) player.y = Math.min(canvas.height - player.size / 2, player.y + player.speed);
+            if (keys['ArrowLeft'] || keys['KeyA']) player.x = Math.max(player.size / 2, player.x - player.speed);
+            if (keys['ArrowRight'] || keys['KeyD']) player.x = Math.min(canvas.width / 2, player.x + player.speed);
+
+            // Shooting (FIX: usando object pooling)
+            if (keys['Space'] && Date.now() - lastShot > 200) {
+                const bullet = getBullet();
+                bullet.x = player.x + player.size / 2;
+                bullet.y = player.y;
+                bullet.width = 15;
+                bullet.height = 4;
+                bullet.speed = 10;
+                bullets.push(bullet);
+                playSFX('shoot');
+                lastShot = Date.now();
+            }
+
+            // Update bullets (FIX: devolver ao pool)
+            bullets = bullets.filter(b => {
+                b.x += b.speed;
+                if (b.x >= canvas.width + 20) {
+                    returnBullet(b);
+                    return false;
+                }
+                return true;
+            });
+
+            // Update bugs
+            bugs = bugs.filter(bug => {
+                bug.x -= bug.speed;
+
+                // Check collision with player (FIX: com invulnerabilidade)
+                if (checkCollision(player, bug) && Date.now() > invulnerableUntil) {
+                    STATE.lives--;
+                    playSFX('damage');
+                    updateHUD();
+                    invulnerableUntil = Date.now() + 1000; // 1s invulnerável
+
+                    if (STATE.lives <= 0) {
+                        gameOver(false);
+                    }
+                    return false;
+                }
+
+                // Check collision with bullets
+                for (let i = bullets.length - 1; i >= 0; i--) {
+                    if (checkBulletCollision(bullets[i], bug)) {
+                        returnBullet(bullets[i]); // FIX: devolver bullet ao pool
+                        bullets.splice(i, 1);
+
+                        // FIX: usar explosion do pool
+                        const exp = getExplosion();
+                        exp.x = bug.x;
+                        exp.y = bug.y;
+                        exp.frame = 0;
+                        exp.big = false;
+                        explosions.push(exp);
+
+                        playSFX('explosion');
+                        STATE.score += 100;
+                        STATE.bugsKilled++;
+                        updateHUD();
+                        return false;
+                    }
+                }
+
+                return bug.x > -30;
+            });
+
+            // Update powerups
+            powerups = powerups.filter(p => {
+                p.x -= p.speed;
+
+                if (checkCollision(player, p)) {
+                    playSFX('powerup');
+                    if (p.type === 'coffee') {
+                        STATE.lives = Math.min(STATE.lives + 1, 5);
+                    } else if (p.type === 'planilha') {
+                        STATE.lives = Math.min(STATE.lives + 3, 5);
+                        STATE.score += 500;
+                    }
+                    updateHUD();
+                    return false;
+                }
+
+                return p.x > -30;
+            });
+
+            // Update explosions (FIX: devolver ao pool)
+            explosions = explosions.filter(e => {
+                e.frame++;
+                if (e.frame >= 15) {
+                    returnExplosion(e);
+                    return false;
+                }
+                return true;
+            });
+
+            // Boss logic
+            if (boss) {
+                // Movement
+                boss.y += boss.speed * boss.direction;
+                if (boss.y <= 50 || boss.y >= canvas.height - 50) {
+                    boss.direction *= -1;
+                }
+
+                // Shooting
+                boss.shootTimer++;
+                if (boss.shootTimer >= 60) {
+                    boss.shootTimer = 0;
+                    bossProjectiles.push({
+                        x: boss.x - 20,
+                        y: boss.y,
+                        size: 10,
+                        speed: 4
+                    });
+                }
+
+                // Check bullet collision
+                for (let i = bullets.length - 1; i >= 0; i--) {
+                    if (checkBulletCollision(bullets[i], { x: boss.x, y: boss.y, size: boss.size })) {
+                        bullets.splice(i, 1);
+                        boss.hp--;
+                        playSFX('bossHit');
+
+                        if (boss.hp <= 0) {
+                            // FIX: Prevenir race condition - salvar posição antes de zerar boss
+                            const bossX = boss.x;
+                            const bossY = boss.y;
+                            boss = null; // Zerar ANTES de outras operações
+
+                            // FIX: usar explosion do pool
+                            const exp = getExplosion();
+                            exp.x = bossX;
+                            exp.y = bossY;
+                            exp.frame = 0;
+                            exp.big = true;
+                            explosions.push(exp);
+
+                            playSFX('explosion');
+                            STATE.score += 5000;
+                            updateHUD();
+
+                            // Garantir que gameOver não execute antes
+                            STATE.gameRunning = false;
+                            setTimeout(() => phaseComplete(), 1000);
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Update boss projectiles
+            bossProjectiles = bossProjectiles.filter(p => {
+                p.x -= p.speed;
+
+                // FIX: Invulnerabilidade também para projéteis do boss
+                if (checkCollision(player, { x: p.x, y: p.y, size: p.size }) && Date.now() > invulnerableUntil) {
+                    STATE.lives--;
+                    playSFX('damage');
+                    updateHUD();
+                    invulnerableUntil = Date.now() + 1000; // 1s invulnerável
+
+                    if (STATE.lives <= 0) {
+                        gameOver(false);
+                    }
+                    return false;
+                }
+
+                return p.x > -20;
+            });
+
+            // Check phase completion
+            if (STATE.bugsKilled >= phase.bugs && !boss) {
+                if (phase.hasBoss) {
+                    if (spawnInterval) clearInterval(spawnInterval);
+                    spawnBoss();
+                } else {
+                    phaseComplete();
+                }
+            }
+        }
+
+        function checkCollision(a, b) {
+            const dist = Math.hypot(a.x - b.x, a.y - b.y);
+            return dist < (a.size / 2 + b.size / 2);
+        }
+
+        function checkBulletCollision(bullet, target) {
+            return bullet.x < target.x + target.size / 2 &&
+                   bullet.x + bullet.width > target.x - target.size / 2 &&
+                   bullet.y < target.y + target.size / 2 &&
+                   bullet.y + bullet.height > target.y - target.size / 2;
+        }
+
+        // FIX: Criar cache do grid para performance
+        function renderGridCached() {
+            if (!gridCache) {
+                // Criar canvas offscreen para cache
+                gridCache = document.createElement('canvas');
+                gridCache.width = canvas.width;
+                gridCache.height = canvas.height;
+                const offCtx = gridCache.getContext('2d');
+
+                // Desenhar grid no cache
+                offCtx.strokeStyle = 'rgba(0, 255, 136, 0.1)';
+                offCtx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 30) {
+                    offCtx.beginPath();
+                    offCtx.moveTo(x, 0);
+                    offCtx.lineTo(x, canvas.height);
+                    offCtx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 30) {
+                    offCtx.beginPath();
+                    offCtx.moveTo(0, y);
+                    offCtx.lineTo(canvas.width, y);
+                    offCtx.stroke();
+                }
+
+                // Desenhar linha de boundary
+                offCtx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
+                offCtx.lineWidth = 2;
+                offCtx.setLineDash([5, 5]);
+                offCtx.beginPath();
+                offCtx.moveTo(canvas.width / 2, 0);
+                offCtx.lineTo(canvas.width / 2, canvas.height);
+                offCtx.stroke();
+                offCtx.setLineDash([]);
+            }
+
+            // Desenhar cache no canvas principal
+            ctx.drawImage(gridCache, 0, 0);
+        }
+
+        function render() {
+            // Clear canvas
+            ctx.fillStyle = '#0a1020';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid (usando cache)
+            renderGridCached();
+
+            // Draw player
+            ctx.font = `${player.size}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('👨‍💻', player.x, player.y);
+
+            // Draw bullets with glow
+            ctx.fillStyle = '#00ff88';
+            ctx.shadowColor = '#00ff88';
+            ctx.shadowBlur = 10;
+            bullets.forEach(b => {
+                ctx.fillRect(b.x, b.y - b.height / 2, b.width, b.height);
+            });
+            ctx.shadowBlur = 0;
+
+            // Draw bugs
+            ctx.font = '25px Arial';
+            bugs.forEach(bug => {
+                ctx.fillText(bug.emoji, bug.x, bug.y);
+            });
+
+            // Draw powerups
+            ctx.font = '30px Arial';
+            powerups.forEach(p => {
+                ctx.fillText(p.emoji, p.x, p.y);
+            });
+
+            // Draw explosions
+            explosions.forEach(e => {
+                const size = e.big ? 60 : 30;
+                const alpha = 1 - (e.frame / 15);
+                ctx.globalAlpha = alpha;
+                ctx.font = `${size + e.frame * 2}px Arial`;
+                ctx.fillText('💥', e.x, e.y);
+                ctx.globalAlpha = 1;
+            });
+
+            // Draw boss
+            if (boss) {
+                // Boss sprite
+                ctx.font = '60px Arial';
+                ctx.fillText('👾', boss.x, boss.y);
+
+                // HP bar
+                const barWidth = 80;
+                const barHeight = 8;
+                const hpPercent = boss.hp / boss.maxHp;
+
+                ctx.fillStyle = '#333';
+                ctx.fillRect(boss.x - barWidth / 2, boss.y - 50, barWidth, barHeight);
+
+                ctx.fillStyle = hpPercent > 0.5 ? '#00ff88' : (hpPercent > 0.25 ? '#ffaa00' : '#ff4444');
+                ctx.fillRect(boss.x - barWidth / 2, boss.y - 50, barWidth * hpPercent, barHeight);
+
+                ctx.strokeStyle = '#fff';
+                ctx.strokeRect(boss.x - barWidth / 2, boss.y - 50, barWidth, barHeight);
+            }
+
+            // Draw boss projectiles
+            ctx.font = '15px Arial';
+            bossProjectiles.forEach(p => {
+                ctx.fillText('🔴', p.x, p.y);
+            });
+        }
+
+        function updateHUD() {
+            const phase = CONFIG.phases[STATE.phase];
+            document.getElementById('hudPhase').textContent = STATE.phase + 1;
+            document.getElementById('hudBugs').textContent = `${STATE.bugsKilled}/${phase.bugs}`;
+            document.getElementById('hudLives').textContent = '❤️'.repeat(STATE.lives);
+            document.getElementById('hudScore').textContent = STATE.score;
+        }
+
+        function phaseComplete() {
+            STATE.gameRunning = false;
+            if (gameLoop) cancelAnimationFrame(gameLoop);
+            if (spawnInterval) clearInterval(spawnInterval);
+
+            if (STATE.phase < CONFIG.phases.length - 1) {
+                STATE.phase++;
+                STATE.bugsKilled = 0;
+                powerupSpawned = false;
+                showPhaseStory();
+            } else {
+                showConclusion();
+            }
+        }
+
+        function gameOver(victory) {
+            STATE.gameRunning = false;
+            if (gameLoop) cancelAnimationFrame(gameLoop);
+            if (spawnInterval) clearInterval(spawnInterval);
+
+            if (!victory) {
+                const overlay = document.getElementById('gameOverOverlay');
+                const title = document.getElementById('overlayTitle');
+                const message = document.getElementById('overlayMessage');
+
+                title.textContent = 'GAME OVER';
+                title.classList.remove('victory');
+                message.innerHTML = `Os bugs venceram...<br>Score: ${STATE.score}`;
+
+                overlay.classList.add('active');
+            }
+        }
+
+        // ==========================================================================
+        // HIGH SCORE SYSTEM (localStorage)
+        // ==========================================================================
+        function getHighScore() {
+            try {
+                return parseInt(localStorage.getItem('natalTCDFHighScore')) || 0;
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        function saveHighScore() {
+            try {
+                const current = getHighScore();
+                if (STATE.score > current) {
+                    localStorage.setItem('natalTCDFHighScore', STATE.score);
+                    return true; // Novo recorde!
+                }
+            } catch (e) {}
+            return false;
+        }
+
+        // ==========================================================================
+        // SCREEN 6: CONCLUSION
+        // ==========================================================================
+        function showConclusion() {
+            showScreen('conclusion');
+            stopAllMusic();
+            playJingleBells();
+
+            // FIX: Salvar high score
+            const isNewRecord = saveHighScore();
+
+            const conclusionText = `$ git push origin main --force-with-lease
+<span class="comment">// Deploy concluído com sucesso!</span>
+
+<span class="string">A equipe TCDF salvou o sistema!</span>
+<span class="string">Todos os bugs foram exterminados!</span>
+
+<span class="comment">// Ariene e Raquel protegeram os setores críticos
+// enquanto o time eliminava as ameaças!</span>
+
+console.log(<span class="string">"🎄 Feliz Natal!"</span>);
+console.log(<span class="string">"🎆 Feliz 2026!"</span>);
+
+<span class="keyword">return</span> gratidão;
+
+<span class="comment">// — Com carinho, Thiago ❤️</span>`;
+
+            document.getElementById('conclusionBody').innerHTML = conclusionText;
+
+            // Mostrar score e high score
+            const highScore = getHighScore();
+            let scoreText = `SCORE FINAL: ${STATE.score}`;
+            if (isNewRecord) {
+                scoreText += ' 🏆 NOVO RECORDE!';
+            } else if (highScore > 0) {
+                scoreText += ` (Recorde: ${highScore})`;
+            }
+            document.getElementById('finalScore').textContent = scoreText;
+
+            // Credits
+            const creditsContainer = document.getElementById('creditsNames');
+            creditsContainer.innerHTML = '';
+
+            CONFIG.allTeam.forEach((name, index) => {
+                const nameEl = document.createElement('span');
+                nameEl.className = 'credit-name';
+                nameEl.textContent = name;
+                nameEl.style.setProperty('--delay', `${index * 0.2}s`);
+                creditsContainer.appendChild(nameEl);
+            });
+        }
+
+        // ==========================================================================
+        // EVENT LISTENERS
+        // ==========================================================================
+        function initEventListeners() {
+            // Buttons
+            document.getElementById('btnStart').addEventListener('click', () => {
+                initAudio();
+                startHomenagem();
+            });
+
+            document.getElementById('btnContinue').addEventListener('click', startPlantao);
+            document.getElementById('btnSelectHero').addEventListener('click', showHeroSelection);
+            document.getElementById('btnStartPhase').addEventListener('click', () => {
+                document.getElementById('storyModal').classList.remove('active');
+                initGame();
+            });
+
+            document.getElementById('btnRetry').addEventListener('click', () => {
+                selectHero(STATE.selectedHero);
+            });
+
+            document.getElementById('btnReplay').addEventListener('click', () => {
+                // Volta direto para seleção de heróis ao invés da tela inicial
+                showHeroSelection();
+            });
+
+            // Audio toggle
+            document.getElementById('audioToggle').addEventListener('click', () => {
+                STATE.audioEnabled = !STATE.audioEnabled;
+                updateAudioUI();
+
+                if (!STATE.audioEnabled) {
+                    stopAllMusic();
+                } else if (STATE.currentScreen === 'initial' || STATE.currentScreen === 'homenagem' || STATE.currentScreen === 'conclusion') {
+                    playJingleBells();
+                } else if (STATE.currentScreen === 'game' || STATE.currentScreen === 'heroes') {
+                    playGameMusic();
+                }
+            });
+
+            // Keyboard
+            document.addEventListener('keydown', (e) => {
+                keys[e.code] = true;
+
+                // Enter para avançar telas
+                if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+                    if (STATE.currentScreen === 'initial') {
+                        document.getElementById('btnStart').click();
+                    } else if (STATE.currentScreen === 'homenagem') {
+                        const btnContinue = document.getElementById('btnContinue');
+                        if (btnContinue.style.display !== 'none') {
+                            btnContinue.click();
+                        }
+                    } else if (STATE.currentScreen === 'plantao') {
+                        const btnSelectHero = document.getElementById('btnSelectHero');
+                        if (btnSelectHero.style.display !== 'none') {
+                            btnSelectHero.click();
+                        }
+                    } else if (STATE.currentScreen === 'conclusion') {
+                        document.getElementById('btnReplay').click();
+                    }
+                }
+
+                if (e.code === 'Space' && STATE.gameRunning) {
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('keyup', (e) => {
+                keys[e.code] = false;
+            });
+
+            // Mobile controls
+            const mobileControls = document.querySelectorAll('.control-btn');
+            mobileControls.forEach(btn => {
+                const key = btn.dataset.key;
+
+                btn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    switch(key) {
+                        case 'up': keys['ArrowUp'] = true; break;
+                        case 'down': keys['ArrowDown'] = true; break;
+                        case 'left': keys['ArrowLeft'] = true; break;
+                        case 'right': keys['ArrowRight'] = true; break;
+                        case 'fire': keys['Space'] = true; break;
+                    }
+                });
+
+                btn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    switch(key) {
+                        case 'up': keys['ArrowUp'] = false; break;
+                        case 'down': keys['ArrowDown'] = false; break;
+                        case 'left': keys['ArrowLeft'] = false; break;
+                        case 'right': keys['ArrowRight'] = false; break;
+                        case 'fire': keys['Space'] = false; break;
+                    }
+                });
+            });
+
+            // Window resize (FIX: com debounce)
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    gridCache = null; // Invalidar cache ao redimensionar
+                    initMatrix();
+                }, 200);
+            });
+        }
+
+        // ==========================================================================
+        // INITIALIZATION
+        // ==========================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initMatrix();
+            createSnowflakes();
+            initEventListeners();
+
+            // Inicia música após interação do usuário (navegadores bloqueiam autoplay)
+            const startAudio = () => {
+                initAudio();
+                playJingleBells();
+                document.removeEventListener('click', startAudio);
+                document.removeEventListener('keydown', startAudio);
+            };
+
+            document.addEventListener('click', startAudio, { once: true });
+            document.addEventListener('keydown', startAudio, { once: true });
+        });
+    </script>
+</body>
+</html>
