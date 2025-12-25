@@ -1431,65 +1431,51 @@
         // ==========================================================================
         // VISUALS
         // ==========================================================================
+        // Matrix background (DOM version - from backup)
+        let matrixRunning = true;
+
         function initMatrixRain() {
-            const canvas = document.getElementById('matrix-canvas');
-            const ctx = canvas.getContext('2d');
-            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-            resize(); window.addEventListener('resize', resize);
+            if (!matrixRunning) return;
 
-            // Usar palavras TCDF ao invés de caracteres aleatórios
-            const matrixWords = CONFIG.matrixWords;
-            const fontSize = 16;
-            const columns = Math.floor(canvas.width / (fontSize * 4)); // Menos colunas para palavras
-            const drops = new Array(columns).fill(1);
-            const words = new Array(columns).fill('').map(() => matrixWords[Math.floor(Math.random() * matrixWords.length)]);
+            const container = document.getElementById('matrix-bg');
+            const numColumns = Math.floor(window.innerWidth / 50);
 
-            let frameCount = 0;
-            function draw() {
-                frameCount++;
-                // Slower speed: update every 3 frames instead of every frame
-                if (frameCount % 3 !== 0) {
-                    requestAnimationFrame(draw);
-                    return;
-                }
-
-                ctx.fillStyle = 'rgba(10, 14, 20, 0.08)'; // Fade mais lento
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
-
-                for (let i = 0; i < drops.length; i++) {
-                    const word = words[i];
-
-                    // Gradient tail effect
-                    for (let j = 0; j < word.length; j++) {
-                        const y = (drops[i] - word.length + j) * fontSize;
-                        if (y > 0) {
-                            const opacity = j === word.length - 1 ? 1.0 : 0.3 + (j / word.length) * 0.5;
-                            ctx.fillStyle = `rgba(0, 255, 65, ${opacity})`;
-
-                            // Leading char has glow
-                            if (j === word.length - 1) {
-                                ctx.shadowBlur = 10;
-                                ctx.shadowColor = '#00ff41';
-                            } else {
-                                ctx.shadowBlur = 0;
-                            }
-
-                            ctx.fillText(word[j], i * fontSize * 4, y);
-                        }
-                    }
-
-                    // Reset & pick new word when reaches bottom
-                    if (drops[i] * fontSize > canvas.height + word.length * fontSize && Math.random() > 0.98) {
-                        drops[i] = 0;
-                        words[i] = matrixWords[Math.floor(Math.random() * matrixWords.length)];
-                    }
-                    drops[i] += 0.5; // Slower fall speed
-                }
-                ctx.shadowBlur = 0;
-                requestAnimationFrame(draw);
+            for (let i = 0; i < numColumns; i++) {
+                createMatrixColumn(container, i, numColumns);
             }
-            draw();
+
+            // Continua criando novas colunas
+            setInterval(() => {
+                const col = Math.floor(Math.random() * numColumns);
+                createMatrixColumn(container, col, numColumns);
+            }, 800);
+        }
+
+        function createMatrixColumn(container, index, total) {
+            if (!matrixRunning) return;
+
+            const column = document.createElement('div');
+            column.className = 'matrix-column';
+            column.style.left = (index * (100 / total) + Math.random() * 3) + '%';
+
+            const duration = 8 + Math.random() * 8;
+            column.style.animationDuration = duration + 's';
+            column.style.opacity = 0.2 + Math.random() * 0.3;
+            column.style.fontSize = (12 + Math.random() * 6) + 'px';
+
+            // Pega uma palavra aleatória e coloca letra por letra (vertical)
+            const word = CONFIG.matrixWords[Math.floor(Math.random() * CONFIG.matrixWords.length)];
+
+            for (let char of word) {
+                const span = document.createElement('span');
+                span.textContent = char;
+                column.appendChild(span);
+            }
+
+            container.appendChild(column);
+
+            // Remove após a animação
+            setTimeout(() => column.remove(), duration * 1000);
         }
 
         function createSnowflakes() {
