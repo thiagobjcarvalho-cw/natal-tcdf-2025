@@ -16,8 +16,11 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
-    <!-- Tone.js for Phase Music System -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Tone.js for Phase Music System - defer to avoid autoplay issues -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"
+      defer
+    ></script>
     <style>
       * {
         margin: 0;
@@ -69,7 +72,9 @@
         line-height: 1.8;
         letter-spacing: 8px;
         color: var(--matrix-green);
-        text-shadow: 0 0 8px var(--matrix-green), 0 0 15px rgba(0, 255, 136, 0.5);
+        text-shadow:
+          0 0 8px var(--matrix-green),
+          0 0 15px rgba(0, 255, 136, 0.5);
         animation: matrixDrop linear infinite;
         opacity: 0.4;
         font-weight: bold;
@@ -83,7 +88,9 @@
 
       .matrix-column span:last-child {
         opacity: 1;
-        text-shadow: 0 0 15px #fff, 0 0 25px var(--matrix-green);
+        text-shadow:
+          0 0 15px #fff,
+          0 0 25px var(--matrix-green);
       }
 
       .matrix-column span:nth-last-child(2) {
@@ -95,8 +102,12 @@
       }
 
       @keyframes matrixDrop {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(250vh); }
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(250vh);
+        }
       }
 
       .crt-overlay {
@@ -1144,7 +1155,7 @@
       <div class="tree-container">
         <div class="tree-glow"></div>
         <img
-          src="tree.png"
+          src="assets/tree.png"
           alt="Feliz Natal"
           class="tree-image"
           id="treeImage"
@@ -1191,6 +1202,11 @@
     </div>
 
     <!-- SCREEN 3: PLANTAO -->
+    <!-- Plantão Audio -->
+    <audio id="audioPlantao" preload="auto">
+      <source src="assets/plantao-da-globo.mp3" type="audio/mpeg" />
+    </audio>
+
     <div class="screen" id="screen-plantao">
       <div class="globo-logo"><div class="globo-inner"></div></div>
       <div class="plantao-title">⚠️ PLANTÃO</div>
@@ -1312,7 +1328,7 @@
     <!-- SCREEN 6: CONCLUSION -->
     <div class="screen" id="screen-conclusion">
       <img
-        src="tree.png"
+        src="assets/tree.png"
         alt="Feliz Natal"
         class="conclusion-tree"
         onerror="this.style.display = 'none'"
@@ -1835,26 +1851,43 @@
       };
 
       async function playPhaseMusic(phaseNumber) {
-        if (!STATE.audioEnabled) return;
+        console.log("🎵 playPhaseMusic called with phase:", phaseNumber);
+
+        if (!STATE.audioEnabled) {
+          console.log("⚠️ Audio disabled, skipping music");
+          return;
+        }
 
         try {
           // Stop any previous Tone.js music
           stopPhaseMusic();
 
           // Initialize Tone.js if needed (AFTER user interaction)
+          // Check if Tone is loaded first
+          if (typeof Tone === "undefined") {
+            console.error("❌ Tone.js not loaded!");
+            return;
+          }
+
+          // Start Tone.js context (requires user gesture)
           if (Tone.context.state !== "running") {
+            console.log("🔊 Initializing Tone.js context...");
             await Tone.start();
+            console.log("✅ Tone.js context started!");
           }
 
           const music = PHASE_MUSIC[phaseNumber];
           if (!music) {
-            console.warn("No music defined for phase:", phaseNumber);
+            console.warn("❌ No music defined for phase:", phaseNumber);
             return;
           }
 
+          console.log("✅ Loading music:", music.title, "- BPM:", music.tempo);
+
           // Create 8-bit synth with phase-specific config
           currentToneSynth = new Tone.Synth(music.synth_config).toDestination();
-          currentToneSynth.volume.value = -12; // Lower volume for background music
+          // Boss music louder for intensity, phases quieter for background
+          currentToneSynth.volume.value = phaseNumber === "boss" ? -8 : -12;
 
           // Create sequence of notes
           currentTonePart = new Tone.Part((time, note) => {
@@ -1867,18 +1900,23 @@
 
           // Enable looping
           currentTonePart.loop = music.loop;
-          currentTonePart.loopEnd = music.notes.length * (60 / music.tempo);
+          // Use 8 measures for loop (automatically calculated by Tone.js based on BPM)
+          currentTonePart.loopEnd = "8m";
 
           // Set tempo
           Tone.Transport.bpm.value = music.tempo;
 
           // Start playback
           currentTonePart.start(0);
-          Tone.Transport.start();
+          // Only start if not already started
+          if (Tone.Transport.state !== "started") {
+            Tone.Transport.start();
+          }
 
           isToneMusicPlaying = true;
+          console.log("🎶 Music started successfully!");
         } catch (error) {
-          console.error("Error playing phase music:", error);
+          console.error("❌ Error playing phase music:", error);
         }
       }
 
@@ -1893,7 +1931,10 @@
             currentToneSynth.dispose();
             currentToneSynth = null;
           }
-          Tone.Transport.stop();
+          // Only stop if currently started
+          if (Tone.Transport.state === "started") {
+            Tone.Transport.stop();
+          }
           isToneMusicPlaying = false;
         } catch (error) {
           console.error("Error stopping phase music:", error);
@@ -2024,7 +2065,7 @@
 
         const column = document.createElement("div");
         column.className = "matrix-column";
-        column.style.left = (index * (100 / total) + Math.random() * 3) + "%";
+        column.style.left = index * (100 / total) + Math.random() * 3 + "%";
 
         const duration = 8 + Math.random() * 8;
         column.style.animationDuration = duration + "s";
@@ -2166,6 +2207,17 @@ console.log(<span class="string">"🎆 Feliz 2026!"</span>);
 
       function startPlantao() {
         showScreen("plantao");
+
+        // Play Plantão MP3 music
+        const audioPlantao = document.getElementById("audioPlantao");
+        if (STATE.audioEnabled && audioPlantao) {
+          audioPlantao.volume = 0.6;
+          audioPlantao.currentTime = 0;
+          audioPlantao
+            .play()
+            .catch((e) => console.log("Plantão audio autoplay blocked:", e));
+        }
+
         const lines = [
           {
             speaker: "ariene",
@@ -2220,6 +2272,13 @@ console.log(<span class="string">"🎆 Feliz 2026!"</span>);
       }
 
       function showHeroSelection() {
+        // Stop Plantão MP3 music
+        const audioPlantao = document.getElementById("audioPlantao");
+        if (audioPlantao) {
+          audioPlantao.pause();
+          audioPlantao.currentTime = 0;
+        }
+
         showScreen("heroes");
         playGameMusic();
         const grid = document.getElementById("heroesGrid");
@@ -3197,9 +3256,9 @@ console.log(<span class="string">"🎆 Feliz 2026!"</span>);
           .addEventListener("click", () => selectDifficulty("god"));
         document
           .getElementById("btnStartPhase")
-          .addEventListener("click", () => {
+          .addEventListener("click", async () => {
             document.getElementById("storyModal").classList.remove("active");
-            playPhaseMusic(STATE.phase); // Start phase music
+            await playPhaseMusic(STATE.phase); // Start phase music (await for Tone.js init)
             initGame();
           });
         document.getElementById("btnRetry").addEventListener("click", () => {
@@ -3220,8 +3279,12 @@ console.log(<span class="string">"🎆 Feliz 2026!"</span>);
           STATE.audioEnabled = !STATE.audioEnabled;
           document.getElementById("audioToggle").textContent =
             STATE.audioEnabled ? "🔊" : "🔇";
-          if (!STATE.audioEnabled) stopMusic();
-          else if (
+          if (!STATE.audioEnabled) {
+            stopMusic();
+            stopPhaseMusic();
+            const audioPlantao = document.getElementById("audioPlantao");
+            if (audioPlantao) audioPlantao.pause();
+          } else if (
             ["initial", "homenagem", "conclusion"].includes(STATE.currentScreen)
           )
             playMusic(JINGLE_BELLS);

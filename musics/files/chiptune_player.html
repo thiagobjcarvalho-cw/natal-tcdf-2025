@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiptune Music Player</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00ff88;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 15px 20px;
+            border: 2px solid #00ff88;
+            background: #0f3460;
+            color: #00ff88;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        button:hover {
+            background: #00ff88;
+            color: #0f3460;
+            box-shadow: 0 0 20px #00ff88;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .control-buttons button {
+            flex: 1;
+            background: #e94560;
+            border-color: #e94560;
+            color: white;
+        }
+        .control-buttons button:hover {
+            background: white;
+            color: #e94560;
+        }
+        .status {
+            text-align: center;
+            color: #00ff88;
+            margin-top: 20px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>♫ CHIPTUNE PLAYER ♫</h1>
+        
+        <div class="button-grid">
+            <button onclick="playMusic('phase1')">🎸 PHASE 1<br>Power Rangers</button>
+            <button onclick="playMusic('phase2')">🍄 PHASE 2<br>Mario</button>
+            <button onclick="playMusic('phase3')">🥊 PHASE 3<br>Street Fighter</button>
+            <button onclick="playMusic('phase4')">👽 PHASE 4<br>Metroid</button>
+            <button onclick="playMusic('phase5')">🏎️ PHASE 5<br>Top Gear</button>
+            <button onclick="playMusic('boss')">💀 BOSS<br>Battle Theme</button>
+        </div>
+        
+        <div class="control-buttons">
+            <button onclick="stopMusic()">⏹ PARAR</button>
+        </div>
+        
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        // POWER RANGERS - E menor, 188 BPM
+        const MUSIC_PHASE1 = {
+            tempo: 188,
+            notes: [
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 261.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 293.66, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 293.66, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 261.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 261.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 493.88, dur: 'e' }, { freq: 0, dur: 'q' },
+                { freq: 392.00, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 493.88, dur: 'q' }, { freq: 0, dur: 'q' }
+            ]
+        };
+
+        // SUPER MARIO BROS - C maior, 100 BPM
+        const MUSIC_PHASE2 = {
+            tempo: 100,
+            notes: [
+                { freq: 659.25, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 659.25, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 659.25, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 523.25, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 659.25, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 783.99, dur: 'h' }, { freq: 0, dur: 'q' },
+                { freq: 392.00, dur: 'h' }, { freq: 0, dur: 'q' },
+                { freq: 392.00, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 659.25, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 783.99, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 880.00, dur: 'h' }, { freq: 0, dur: 'q' },
+                { freq: 783.99, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 783.99, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 659.25, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 523.25, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 587.33, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 659.25, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 783.99, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 880.00, dur: 'h' }, { freq: 0, dur: 'q' }
+            ]
+        };
+
+        // STREET FIGHTER - GUILE THEME - C menor, 120 BPM
+        const MUSIC_PHASE3 = {
+            tempo: 120,
+            notes: [
+                { freq: 261.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 311.13, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 349.23, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'qd' }, { freq: 0, dur: 'e' },
+                { freq: 349.23, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 311.13, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 261.63, dur: 'h' }, { freq: 0, dur: 'q' },
+                { freq: 261.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 311.13, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 349.23, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 415.30, dur: 'h' }, { freq: 0, dur: 'q' },
+                { freq: 349.23, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 311.13, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 261.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 233.08, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 261.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 311.13, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 349.23, dur: 'q' }, { freq: 0, dur: 'q' }
+            ]
+        };
+
+        // SUPER METROID - BRINSTAR - G menor/dórico, 75 BPM
+        const MUSIC_PHASE4 = {
+            tempo: 75,
+            notes: [
+                { freq: 196.00, dur: 'w' }, { freq: 0, dur: 'e' },
+                { freq: 293.66, dur: 'h' }, { freq: 0, dur: 'e' },
+                { freq: 233.08, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 261.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 220.00, dur: 'h' }, { freq: 0, dur: 'q' },
+                { freq: 196.00, dur: 'w' }, { freq: 0, dur: 'e' },
+                { freq: 246.94, dur: 'h' }, { freq: 0, dur: 'q' },
+                { freq: 293.66, dur: 'h' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 349.23, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'h' }, { freq: 0, dur: 'e' },
+                { freq: 349.23, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 293.66, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 246.94, dur: 'w' }, { freq: 0, dur: 'q' }
+            ]
+        };
+
+        // TOP GEAR - G menor arpeggio, 128 BPM
+        const MUSIC_PHASE5 = {
+            tempo: 128,
+            notes: [
+                { freq: 196.00, dur: 'e' }, { freq: 233.08, dur: 'e' },
+                { freq: 293.66, dur: 'e' }, { freq: 392.00, dur: 'e' },
+                { freq: 293.66, dur: 'e' }, { freq: 233.08, dur: 'e' },
+                { freq: 196.00, dur: 'e' }, { freq: 146.83, dur: 'e' },
+                { freq: 196.00, dur: 'e' }, { freq: 233.08, dur: 'e' },
+                { freq: 293.66, dur: 'e' }, { freq: 392.00, dur: 'e' },
+                { freq: 392.00, dur: 'e' }, { freq: 349.23, dur: 'e' },
+                { freq: 293.66, dur: 'e' }, { freq: 233.08, dur: 'e' },
+                { freq: 174.61, dur: 'e' }, { freq: 207.65, dur: 'e' },
+                { freq: 246.94, dur: 'e' }, { freq: 329.63, dur: 'e' },
+                { freq: 392.00, dur: 'e' }, { freq: 329.63, dur: 'e' },
+                { freq: 246.94, dur: 'e' }, { freq: 207.65, dur: 'e' },
+                { freq: 174.61, dur: 'e' }, { freq: 146.83, dur: 'e' },
+                { freq: 196.00, dur: 'h' }, { freq: 0, dur: 'q' }
+            ]
+        };
+
+        // BOSS BATTLE - E menor, 170 BPM
+        const MUSIC_BOSS = {
+            tempo: 170,
+            notes: [
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 311.13, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 349.23, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 369.99, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'q' }, { freq: 0, dur: 'q' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 440.00, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 493.88, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 440.00, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'e' }, { freq: 0, dur: 'q' },
+                { freq: 329.63, dur: 'q' }, { freq: 0, dur: 'e' },
+                { freq: 293.66, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 329.63, dur: 'e' }, { freq: 0, dur: 'e' },
+                { freq: 392.00, dur: 'h' }, { freq: 0, dur: 'q' }
+            ]
+        };
+
+        const musicMap = {
+            phase1: MUSIC_PHASE1,
+            phase2: MUSIC_PHASE2,
+            phase3: MUSIC_PHASE3,
+            phase4: MUSIC_PHASE4,
+            phase5: MUSIC_PHASE5,
+            boss: MUSIC_BOSS
+        };
+
+        let audioContext = null;
+        let currentOscillator = null;
+        let currentGain = null;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function getDurationInSeconds(dur, tempo) {
+            const beatDuration = 60 / tempo;
+            const durations = {
+                'w': 4,
+                'h': 2,
+                'qd': 1.5,
+                'q': 1,
+                'e': 0.5
+            };
+            return (durations[dur] || 1) * beatDuration;
+        }
+
+        function playNote(freq, duration) {
+            return new Promise(resolve => {
+                if (freq === 0) {
+                    setTimeout(resolve, duration * 1000);
+                    return;
+                }
+
+                const osc = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                osc.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                osc.frequency.value = freq;
+                osc.type = 'square';
+
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+
+                osc.start(audioContext.currentTime);
+                osc.stop(audioContext.currentTime + duration);
+
+                setTimeout(resolve, duration * 1000);
+            });
+        }
+
+        async function playMusic(musicKey) {
+            initAudio();
+            const music = musicMap[musicKey];
+            if (!music) return;
+
+            updateStatus(`Tocando ${musicKey.toUpperCase()}...`);
+
+            try {
+                for (const note of music.notes) {
+                    const duration = getDurationInSeconds(note.dur, music.tempo);
+                    await playNote(note.freq, duration);
+                }
+                updateStatus('Pronto!');
+            } catch (e) {
+                updateStatus('Erro ao tocar');
+            }
+        }
+
+        function stopMusic() {
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+            updateStatus('Parado');
+        }
+
+        function updateStatus(text) {
+            document.getElementById('status').textContent = text;
+        }
+    </script>
+</body>
+</html>

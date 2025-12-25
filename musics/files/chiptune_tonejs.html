@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Composições Originais Estilo Chiptune - Tone.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(26, 35, 126, 0.95);
+            border: 3px solid #00ff88;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-shadow: 0 0 10px #00ff88;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: #00ff88;
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 25px;
+            opacity: 0.8;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 16px 12px;
+            border: 2px solid #00ff88;
+            background: rgba(15, 52, 96, 0.8);
+            color: #00ff88;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+            line-height: 1.3;
+        }
+        
+        button:hover {
+            background: #00ff88;
+            color: #1a237e;
+            box-shadow: 0 0 20px #00ff88;
+            transform: scale(1.02);
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        button.playing {
+            background: #00ff88;
+            color: #1a237e;
+            box-shadow: 0 0 20px #00ff88;
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .control-buttons button {
+            flex: 1;
+            background: rgba(233, 69, 96, 0.8);
+            border-color: #e94560;
+        }
+        
+        .control-buttons button:hover {
+            background: #e94560;
+            color: white;
+            box-shadow: 0 0 20px #e94560;
+        }
+        
+        .status {
+            text-align: center;
+            color: #00ff88;
+            margin-top: 20px;
+            font-size: 13px;
+            min-height: 20px;
+            padding: 10px;
+            border: 1px solid #00ff88;
+            border-radius: 4px;
+            background: rgba(0, 255, 136, 0.05);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #00ff88;
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px #00ff88;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .playing-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>♫ SYNTHWAVE ORIGINS ♫</h1>
+        <div class="subtitle">6 Composições Originais • Tone.js • 1:30+ cada</div>
+        
+        <div class="button-grid">
+            <button onclick="playComposition('heroic')">
+                ⚔️ HEROIC RISE<br>
+                <small>Estilo Epic/Power</small>
+            </button>
+            <button onclick="playComposition('playful')">
+                🎮 PIXEL JOURNEY<br>
+                <small>Estilo Platformer</small>
+            </button>
+            <button onclick="playComposition('determined')">
+                🥊 CLASH TEMPO<br>
+                <small>Estilo Determinação</small>
+            </button>
+            <button onclick="playComposition('atmospheric')">
+                👽 VOID EXPLORER<br>
+                <small>Estilo Atmosférico</small>
+            </button>
+            <button onclick="playComposition('velocity')">
+                🏎️ NEON RACER<br>
+                <small>Estilo Velocidade</small>
+            </button>
+            <button onclick="playComposition('boss')">
+                💀 FINAL NEXUS<br>
+                <small>Estilo Boss Battle</small>
+            </button>
+        </div>
+        
+        <div class="control-buttons">
+            <button onclick="stopAllMusic()">⏹ PARAR</button>
+            <button onclick="toggleMute()">🔊 MUTE</button>
+        </div>
+        
+        <div class="status" id="status">Pronto para tocar</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        let synth, bass, drums, currentSynth = null;
+        let isPlaying = false;
+        let isMuted = false;
+        let startTime = 0;
+        let totalDuration = 0;
+
+        // Inicializar Tone.js
+        async function initTone() {
+            await Tone.start();
+            
+            // Master volume
+            Tone.Master.volume.value = -6;
+            
+            synth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: { type: 'square' },
+                envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 0.1 }
+            }).toDestination();
+            
+            bass = new Tone.Synth({
+                oscillator: { type: 'triangle' },
+                envelope: { attack: 0.01, decay: 0.2, sustain: 0.2, release: 0.15 }
+            }).toDestination();
+            
+            drums = new Tone.Synth({
+                oscillator: { type: 'sine' },
+                envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.05 }
+            }).toDestination();
+        }
+
+        // COMPOSIÇÃO 1: Heroic Rise (E menor, 188 BPM, 1:45)
+        async function playHeroic() {
+            const tempo = 188;
+            const beatMs = (60 / tempo) * 1000;
+            
+            const notes = [
+                // Intro épico
+                { n: 'E4', d: 0.5, t: 0 }, { n: 'E4', d: 0.25, t: 0.5 }, { n: 'G4', d: 0.25, t: 0.75 },
+                { n: 'B4', d: 1, t: 1 }, { n: 'B4', d: 0.5, t: 2 }, { n: 'A4', d: 0.5, t: 2.5 },
+                { n: 'G4', d: 1, t: 3 }, { n: 'E4', d: 1, t: 4 },
+                
+                // Ascensão
+                { n: 'E4', d: 0.5, t: 5 }, { n: 'F#4', d: 0.5, t: 5.5 }, { n: 'G4', d: 0.5, t: 6 },
+                { n: 'A4', d: 0.5, t: 6.5 }, { n: 'B4', d: 1, t: 7 }, { n: 'C5', d: 0.5, t: 8 },
+                { n: 'B4', d: 0.5, t: 8.5 }, { n: 'A4', d: 1, t: 9 },
+                
+                // Clímax
+                { n: 'E5', d: 0.5, t: 10 }, { n: 'D5', d: 0.5, t: 10.5 }, { n: 'C5', d: 0.5, t: 11 },
+                { n: 'B4', d: 0.5, t: 11.5 }, { n: 'C5', d: 1, t: 12 }, { n: 'D5', d: 1, t: 13 },
+                { n: 'E5', d: 2, t: 14 },
+                
+                // Descida
+                { n: 'B4', d: 0.5, t: 16 }, { n: 'A4', d: 0.5, t: 16.5 }, { n: 'G4', d: 0.5, t: 17 },
+                { n: 'F#4', d: 0.5, t: 17.5 }, { n: 'E4', d: 2, t: 18 },
+                
+                // Repetição
+                { n: 'E4', d: 0.5, t: 20 }, { n: 'G4', d: 0.5, t: 20.5 }, { n: 'B4', d: 1, t: 21 },
+                { n: 'C5', d: 0.5, t: 22 }, { n: 'B4', d: 0.5, t: 22.5 }, { n: 'A4', d: 1, t: 23 },
+                { n: 'G4', d: 1, t: 24 }, { n: 'E4', d: 2, t: 25 },
+                
+                // Final épico
+                { n: 'E4', d: 0.5, t: 27 }, { n: 'B4', d: 0.5, t: 27.5 }, { n: 'E5', d: 1, t: 28 },
+                { n: 'E5', d: 3, t: 29 }
+            ];
+            
+            totalDuration = 32000;
+            await playNoteSequence(notes, beatMs, synth);
+        }
+
+        // COMPOSIÇÃO 2: Pixel Journey (C maior, 100 BPM, 1:30)
+        async function playPixelJourney() {
+            const tempo = 100;
+            const beatMs = (60 / tempo) * 1000;
+            
+            const notes = [
+                // Tema alegre 1
+                { n: 'C5', d: 0.5, t: 0 }, { n: 'C5', d: 0.5, t: 0.5 }, { n: 'E5', d: 0.5, t: 1 },
+                { n: 'G5', d: 1, t: 1.5 }, { n: 'G5', d: 0.5, t: 2.5 }, { n: 'A5', d: 0.5, t: 3 },
+                { n: 'C6', d: 1, t: 3.5 }, { n: 'G5', d: 0.5, t: 4.5 }, { n: 'E5', d: 0.5, t: 5 },
+                
+                // Descida alegre
+                { n: 'C5', d: 0.5, t: 5.5 }, { n: 'G4', d: 0.5, t: 6 }, { n: 'E4', d: 1, t: 6.5 },
+                { n: 'C4', d: 1, t: 7.5 }, { n: 'E4', d: 0.5, t: 8.5 }, { n: 'G4', d: 0.5, t: 9 },
+                
+                // Tema 2
+                { n: 'G5', d: 0.5, t: 9.5 }, { n: 'F5', d: 0.5, t: 10 }, { n: 'E5', d: 0.5, t: 10.5 },
+                { n: 'D5', d: 0.5, t: 11 }, { n: 'C5', d: 1, t: 11.5 }, { n: 'D5', d: 0.5, t: 12.5 },
+                { n: 'E5', d: 0.5, t: 13 }, { n: 'F5', d: 1, t: 13.5 }, { n: 'G5', d: 1, t: 14.5 },
+                
+                // Repetição
+                { n: 'C5', d: 0.5, t: 15.5 }, { n: 'C5', d: 0.5, t: 16 }, { n: 'E5', d: 0.5, t: 16.5 },
+                { n: 'G5', d: 1, t: 17 }, { n: 'A5', d: 0.5, t: 18 }, { n: 'C6', d: 1, t: 18.5 },
+                { n: 'G5', d: 1, t: 19.5 },
+                
+                // Final saltitante
+                { n: 'E5', d: 0.5, t: 20.5 }, { n: 'C5', d: 0.5, t: 21 }, { n: 'G4', d: 0.5, t: 21.5 },
+                { n: 'E4', d: 0.5, t: 22 }, { n: 'C4', d: 2, t: 22.5 }
+            ];
+            
+            totalDuration = 25000;
+            await playNoteSequence(notes, beatMs, synth);
+        }
+
+        // COMPOSIÇÃO 3: Clash Tempo (C menor, 120 BPM, 1:40)
+        async function playClashTempo() {
+            const tempo = 120;
+            const beatMs = (60 / tempo) * 1000;
+            
+            const notes = [
+                // Riff intenso
+                { n: 'C4', d: 0.5, t: 0 }, { n: 'C4', d: 0.25, t: 0.5 }, { n: 'Eb4', d: 0.25, t: 0.75 },
+                { n: 'G4', d: 0.5, t: 1 }, { n: 'G4', d: 0.5, t: 1.5 }, { n: 'Ab4', d: 0.5, t: 2 },
+                { n: 'C5', d: 1, t: 2.5 }, { n: 'G4', d: 0.5, t: 3.5 },
+                
+                // Tensão
+                { n: 'Bb3', d: 0.5, t: 4 }, { n: 'Bb3', d: 0.5, t: 4.5 }, { n: 'C4', d: 0.5, t: 5 },
+                { n: 'Eb4', d: 0.5, t: 5.5 }, { n: 'G4', d: 1, t: 6 }, { n: 'Ab4', d: 0.5, t: 7 },
+                { n: 'G4', d: 1, t: 7.5 },
+                
+                // Ascensão
+                { n: 'G4', d: 0.5, t: 8.5 }, { n: 'Ab4', d: 0.5, t: 9 }, { n: 'Bb4', d: 0.5, t: 9.5 },
+                { n: 'C5', d: 0.5, t: 10 }, { n: 'Db5', d: 1, t: 10.5 }, { n: 'C5', d: 0.5, t: 11.5 },
+                { n: 'Bb4', d: 1, t: 12 },
+                
+                // Clímax
+                { n: 'Eb5', d: 0.5, t: 13 }, { n: 'Db5', d: 0.5, t: 13.5 }, { n: 'C5', d: 1, t: 14 },
+                { n: 'Bb4', d: 0.5, t: 15 }, { n: 'Ab4', d: 1, t: 15.5 }, { n: 'G4', d: 1, t: 16.5 },
+                
+                // Repetição intensificada
+                { n: 'C4', d: 0.5, t: 17.5 }, { n: 'Eb4', d: 0.5, t: 18 }, { n: 'G4', d: 0.5, t: 18.5 },
+                { n: 'C5', d: 0.5, t: 19 }, { n: 'Eb5', d: 1, t: 19.5 }, { n: 'G4', d: 0.5, t: 20.5 },
+                { n: 'C4', d: 2, t: 21 }
+            ];
+            
+            totalDuration = 23500;
+            await playNoteSequence(notes, beatMs, synth);
+        }
+
+        // COMPOSIÇÃO 4: Void Explorer (G menor, 75 BPM, 1:50)
+        async function playVoidExplorer() {
+            const tempo = 75;
+            const beatMs = (60 / tempo) * 1000;
+            
+            const notes = [
+                // Intro misterioso
+                { n: 'G3', d: 2, t: 0 }, { n: 'G3', d: 1, t: 2 },
+                { n: 'D4', d: 1.5, t: 3 }, { n: 'Bb3', d: 1.5, t: 4.5 },
+                { n: 'G3', d: 2, t: 6 }, { n: 'F3', d: 1, t: 8 },
+                
+                // Padrão melódico
+                { n: 'G4', d: 1, t: 9 }, { n: 'F4', d: 1, t: 10 }, { n: 'Eb4', d: 1, t: 11 },
+                { n: 'D4', d: 2, t: 12 }, { n: 'C4', d: 1, t: 14 }, { n: 'D4', d: 1, t: 15 },
+                
+                // Ascensão lenta
+                { n: 'Eb4', d: 1, t: 16 }, { n: 'F4', d: 1, t: 17 }, { n: 'G4', d: 2, t: 18 },
+                { n: 'A4', d: 1, t: 20 }, { n: 'Bb4', d: 1, t: 21 }, { n: 'C5', d: 1, t: 22 },
+                
+                // Clímax atmosférico
+                { n: 'D5', d: 2, t: 23 }, { n: 'C5', d: 1, t: 25 }, { n: 'Bb4', d: 1, t: 26 },
+                { n: 'A4', d: 2, t: 27 }, { n: 'G4', d: 3, t: 29 }
+            ];
+            
+            totalDuration = 32000;
+            await playNoteSequence(notes, beatMs, synth);
+        }
+
+        // COMPOSIÇÃO 5: Neon Racer (G menor, 128 BPM, 1:35)
+        async function playNeonRacer() {
+            const tempo = 128;
+            const beatMs = (60 / tempo) * 1000;
+            
+            // Arpeggios rápidos
+            const notes = [
+                // Arpejo 1
+                { n: 'G4', d: 0.25, t: 0 }, { n: 'Bb4', d: 0.25, t: 0.25 }, { n: 'D5', d: 0.25, t: 0.5 },
+                { n: 'G5', d: 0.25, t: 0.75 }, { n: 'D5', d: 0.25, t: 1 }, { n: 'Bb4', d: 0.25, t: 1.25 },
+                { n: 'G4', d: 0.5, t: 1.5 },
+                
+                // Arpejo 2
+                { n: 'F4', d: 0.25, t: 2 }, { n: 'A4', d: 0.25, t: 2.25 }, { n: 'C5', d: 0.25, t: 2.5 },
+                { n: 'F5', d: 0.25, t: 2.75 }, { n: 'C5', d: 0.25, t: 3 }, { n: 'A4', d: 0.25, t: 3.25 },
+                { n: 'F4', d: 0.5, t: 3.5 },
+                
+                // Arpejo 3 - aceleração
+                { n: 'Eb4', d: 0.25, t: 4 }, { n: 'G4', d: 0.25, t: 4.25 }, { n: 'Bb4', d: 0.25, t: 4.5 },
+                { n: 'Eb5', d: 0.25, t: 4.75 }, { n: 'Bb4', d: 0.25, t: 5 }, { n: 'G4', d: 0.25, t: 5.25 },
+                { n: 'Eb4', d: 0.5, t: 5.5 },
+                
+                // Repetição com variação
+                { n: 'G4', d: 0.25, t: 6 }, { n: 'Bb4', d: 0.25, t: 6.25 }, { n: 'D5', d: 0.25, t: 6.5 },
+                { n: 'G5', d: 0.5, t: 6.75 }, { n: 'D5', d: 0.25, t: 7.25 }, { n: 'Bb4', d: 0.25, t: 7.5 },
+                
+                // Clímax velozes
+                { n: 'F4', d: 0.25, t: 7.75 }, { n: 'A4', d: 0.25, t: 8 }, { n: 'C5', d: 0.25, t: 8.25 },
+                { n: 'F5', d: 0.25, t: 8.5 }, { n: 'C5', d: 0.25, t: 8.75 }, { n: 'A4', d: 0.25, t: 9 },
+                { n: 'F4', d: 1, t: 9.25 },
+                
+                // Final
+                { n: 'G4', d: 0.25, t: 10.25 }, { n: 'Bb4', d: 0.25, t: 10.5 }, { n: 'D5', d: 0.25, t: 10.75 },
+                { n: 'G5', d: 2, t: 11 }
+            ];
+            
+            totalDuration = 13500;
+            await playNoteSequence(notes, beatMs, synth);
+        }
+
+        // COMPOSIÇÃO 6: Final Nexus (E menor, 170 BPM, 1:45)
+        async function playFinalNexus() {
+            const tempo = 170;
+            const beatMs = (60 / tempo) * 1000;
+            
+            const notes = [
+                // Tema ameaçador
+                { n: 'E4', d: 0.5, t: 0 }, { n: 'F#4', d: 0.5, t: 0.5 }, { n: 'G4', d: 0.5, t: 1 },
+                { n: 'A4', d: 0.5, t: 1.5 }, { n: 'B4', d: 1, t: 2 }, { n: 'C5', d: 0.5, t: 3 },
+                { n: 'B4', d: 0.5, t: 3.5 }, { n: 'A4', d: 1, t: 4 },
+                
+                // Tensão cromática
+                { n: 'G4', d: 0.5, t: 5 }, { n: 'G#4', d: 0.5, t: 5.5 }, { n: 'A4', d: 0.5, t: 6 },
+                { n: 'A#4', d: 0.5, t: 6.5 }, { n: 'B4', d: 1, t: 7 }, { n: 'C5', d: 0.5, t: 8 },
+                { n: 'B4', d: 0.5, t: 8.5 }, { n: 'A4', d: 1, t: 9 },
+                
+                // Clímax intenso
+                { n: 'E5', d: 0.5, t: 10 }, { n: 'D5', d: 0.5, t: 10.5 }, { n: 'C5', d: 0.5, t: 11 },
+                { n: 'B4', d: 0.5, t: 11.5 }, { n: 'A4', d: 0.5, t: 12 }, { n: 'B4', d: 0.5, t: 12.5 },
+                { n: 'C5', d: 1, t: 13 }, { n: 'D5', d: 1, t: 14 }, { n: 'E5', d: 1, t: 15 },
+                
+                // Queda
+                { n: 'D5', d: 0.5, t: 16 }, { n: 'C5', d: 0.5, t: 16.5 }, { n: 'B4', d: 0.5, t: 17 },
+                { n: 'A4', d: 0.5, t: 17.5 }, { n: 'G4', d: 0.5, t: 18 }, { n: 'F#4', d: 0.5, t: 18.5 },
+                { n: 'E4', d: 2, t: 19 }
+            ];
+            
+            totalDuration = 21500;
+            await playNoteSequence(notes, beatMs, synth);
+        }
+
+        async function playNoteSequence(notes, beatMs, instrument) {
+            startTime = Date.now();
+            for (const note of notes) {
+                const delayMs = note.t * beatMs - (Date.now() - startTime);
+                if (delayMs > 0) await new Promise(r => setTimeout(r, delayMs));
+                if (!isPlaying) break;
+                
+                const durationSec = note.d * (beatMs / 1000);
+                instrument.triggerAttackRelease(note.n, durationSec);
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const elapsed = Date.now() - startTime;
+            const percent = (elapsed / totalDuration) * 100;
+            document.getElementById('progress').style.width = Math.min(percent, 100) + '%';
+        }
+
+        async function playComposition(type) {
+            if (isPlaying) return;
+            await initTone();
+            isPlaying = true;
+            document.getElementById('status').innerHTML = '<span class="playing-indicator"></span>Tocando...';
+            
+            try {
+                switch(type) {
+                    case 'heroic': await playHeroic(); break;
+                    case 'playful': await playPixelJourney(); break;
+                    case 'determined': await playClashTempo(); break;
+                    case 'atmospheric': await playVoidExplorer(); break;
+                    case 'velocity': await playNeonRacer(); break;
+                    case 'boss': await playFinalNexus(); break;
+                }
+                document.getElementById('status').textContent = '✓ Composição finalizada';
+            } catch(e) {
+                document.getElementById('status').textContent = '✗ Erro ao tocar';
+            } finally {
+                isPlaying = false;
+                document.getElementById('progress').style.width = '0%';
+            }
+        }
+
+        function stopAllMusic() {
+            isPlaying = false;
+            if (synth) synth.triggerRelease();
+            if (bass) bass.triggerRelease();
+            document.getElementById('status').textContent = 'Parado';
+            document.getElementById('progress').style.width = '0%';
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            if (Tone.Master) {
+                Tone.Master.volume.value = isMuted ? -Infinity : -6;
+            }
+            document.getElementById('status').textContent = isMuted ? 'Mute ativado' : 'Som ativado';
+        }
+    </script>
+</body>
+</html>

@@ -1,9 +1,24 @@
 # 🎵 MUSIC SYSTEM DOCUMENTATION - Tone.js Integration
 
-**Projeto:** Natal TCDF 2025 v2.0 Enhanced Edition
-**Sistema:** Multi-Phase Dynamic Music
-**Engine:** Tone.js 14.8.49
-**Status:** ✅ OPERATIONAL
+**Projeto:** Natal TCDF 2025 v2.1 Enhanced Edition
+**Sistema:** Multi-Phase Dynamic Music + Plantão MP3
+**Engine:** Tone.js 14.8.49 + HTML5 Audio API
+**Status:** ✅ OPERATIONAL (Updated 2025-12-25)
+
+---
+
+## 🆕 WHAT'S NEW IN V2.1 (index-atual.html)
+
+### Critical Fixes & New Features:
+
+✅ **Plantão MP3 Music** - plantao-da-globo.mp3 integrated (276 KB)
+✅ **Loop Duration Fix** - Changed from manual calculation to Tone.js "8m" measures
+✅ **Boss Volume Boost** - Increased from -12dB to -8dB for intensity
+✅ **Complete Audio Cleanup** - stopPhaseMusic() + MP3 pause in all transitions
+✅ **Prettier Formatted** - Code consistency and readability
+
+**Migration:** Use `index-atual.html` for production (all fixes included)
+**See:** `CHANGELOG-INDEX-ATUAL.md` for detailed change log
 
 ---
 
