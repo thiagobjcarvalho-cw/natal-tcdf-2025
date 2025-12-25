@@ -2,9 +2,11 @@
 
 **Versão:** 1.2 Final
 **Data:** 2024-12-24
-**Status:** ✅ 100% Pronto
+**Status:** X 50% Pronto
 
 ---
+
+IMPORTANTE: Arquivo desatualizado
 
 ## ✅ TELA 1 - INICIAL (100%)
 
@@ -21,7 +23,7 @@
 
 ### Interação
 - ✅ Botão: "npm run homenagem"
-- ✅ **ENTER avança para próxima tela**
+- x **ENTER avança para próxima tela**
 
 ---
 
@@ -39,11 +41,11 @@
 
 ### Interação
 - Botão "Continuar" após typewriter
-- ✅ **ENTER avança** (quando botão visível)
+- x **ENTER avança** (quando botão visível)
 
 ---
 
-## ✅ TELA 3 - PLANTÃO (100%)
+## x TELA 3 - PLANTÃO (100%)
 
 ### Visual
 - Logo Globo animado
@@ -55,7 +57,7 @@
 
 ### Interação
 - Botão "Selecionar Herói"
-- ✅ **ENTER avança** (quando botão visível)
+- x **ENTER avança** (quando botão visível)
 
 ---
 
