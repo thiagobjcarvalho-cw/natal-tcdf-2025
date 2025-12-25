@@ -240,9 +240,31 @@ E especialmente para quem encara bugs impossíveis, deploys de sexta-feira, e ai
 
 <div align="center">
 
-**Versão:** 1.2 Final
-**Data:** 2024-12-24
+**Versão:** 2.0 Enhanced Edition
+**Data:** 2024-12-25
 **Status:** ✅ Pronto para produção
+
+### 🆕 Novidades v2.0
+
+- 🎮 **5 fases progressivas** (DEV → STAGE → HMG → PROD)
+- 🎯 **3 níveis de dificuldade** (Easy/Hard/God)
+- 🔥 **Combo system** até 10x
+- ⚡ **Weapon upgrade** (5 níveis)
+- 👾 **Boss 3 fases** (Aimed/Fan/Radial)
+- 💥 **Juice & Polish** (shake/flash/particles)
+- 🐛 **8 padrões movimento** bugs
+- 🛡️ **Novo powerup** Shield
+
+### 🎵 Novidades v2.1
+
+- 🎸 **Músicas diferentes por fase** (Tone.js)
+- 🎹 **6 trilhas sonoras** 8-bit (uma por ambiente + boss)
+- 🛠️ **Ferramentas de extração** (Python + Bash)
+- 📚 **Sistema extensível** (fácil adicionar músicas)
+
+[Ver changelog completo](CHANGELOG-V2.md) | [Sistema de Músicas](MUSIC-SYSTEM.md)
+
+---
 
 🎄 **Feliz Natal 2025!** 🎆
 
